@@ -22,6 +22,14 @@ fi
 
 cmd="$DOCKER build -f $distro/Dockerfile "
 
+if [[ -n "$http_proxy" ]]; then
+    cmd+="--build-arg http_proxy=$http_proxy "
+fi
+
+if [[ -n "$https_proxy" ]]; then
+    cmd+="--build-arg https_proxy=$https_proxy "
+fi
+
 cmd+="--build-arg uid=$(id -u) "
 cmd+="--build-arg gid=$(id -g) "
 cmd+="--build-arg from=$distro:$version "
