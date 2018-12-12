@@ -20,6 +20,7 @@ RUN apt-get -q -y update && \
       lzop \
       make \
       u-boot-tools \
+      rsync \
       xz-utils \
       $(/tmp/packages.sh) && \
     rm -rf /var/lib/apt/lists/* /tmp/packages.sh
