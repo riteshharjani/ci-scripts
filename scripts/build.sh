@@ -19,8 +19,8 @@ IFS=@ read -r task subarch distro version <<< "$1"
 
 image="linuxppc/$distro-$version"
 
-build_dir=$(get_build_dir "$script_base" "$subarch" "$distro" "$version")
-mkdir -p "$build_dir"
+output_dir=$(get_output_dir "$script_base" "$subarch" "$distro" "$version")
+mkdir -p "$output_dir"
 
 SRC="${SRC/#\~/$HOME}"
 SRC=$(realpath "$SRC")
@@ -37,8 +37,8 @@ cmd="$DOCKER run -it --rm "
 cmd+="--network none "
 cmd+="-w /linux "
 cmd+="-v $SRC:/linux:ro "
-cmd+="-v $build_dir:/build:rw "
-cmd+="-e KBUILD_OUTPUT=/build "
+cmd+="-v $output_dir:/output:rw "
+cmd+="-e KBUILD_OUTPUT=/output "
 cmd+="$alternate_binds "
 cmd+="-e ARCH=powerpc "
 cmd+="-e JFACTOR=$JFACTOR "

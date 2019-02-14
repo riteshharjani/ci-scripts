@@ -15,7 +15,7 @@ function get_alternate_binds()
     fi
 }
 
-function get_build_dir()
+function get_output_dir()
 {
     local script_base="$1"
     local subarch="$2"
@@ -24,11 +24,11 @@ function get_build_dir()
     local task="$5" # optional
 
     if [[ -z "$script_base" || -z "$subarch" || -z "$distro" || -z "$version" ]]; then
-	echo "Error: not enough arguments to get_build_dir()" >&2
+	echo "Error: not enough arguments to get_output_dir()" >&2
 	return 1
     fi
 
-    echo "$script_base/../build/$subarch-$distro-$version/$task"
+    echo "$script_base/../output/$subarch-$distro-$version/$task"
     return 0
 }
 
