@@ -11,6 +11,6 @@ script_base="$(realpath "$dir")"
 
 IFS=@ read -r task subarch distro version <<< "$1"
 
-build_dir=$(get_build_dir "$script_base" "$subarch" "$distro" "$version")
+output_dir=$(get_output_dir "$script_base" "$subarch" "$distro" "$version")
 
-(set -x ; rm -rf "$build_dir")
+(set -x ; rm -rf "$output_dir")
