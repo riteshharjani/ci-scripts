@@ -23,6 +23,10 @@ if [[ "$machine" == "ppc64le" ]]; then
     PACKAGES+=" libcap-ng-dev"
     PACKAGES+=" libnuma-dev"
     PACKAGES+=" libpopt-dev"
+
+    if [[ "$VERSION_ID" == "18.10" ]]; then
+        PACKAGES+=" clang llvm"
+    fi
 else
     PACKAGES+=" gcc-powerpc64le-linux-gnu g++-powerpc64le-linux-gnu"
 fi
