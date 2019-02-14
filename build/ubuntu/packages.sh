@@ -20,6 +20,7 @@ elif [[ "$VERSION_ID" == "18.10" ]]; then
 fi
 
 if [[ "$machine" == "ppc64le" ]]; then
+    PACKAGES+=" libcap-dev"
     PACKAGES+=" libcap-ng-dev"
     PACKAGES+=" libnuma-dev"
     PACKAGES+=" libpopt-dev"
