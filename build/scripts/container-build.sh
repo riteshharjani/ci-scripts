@@ -37,6 +37,11 @@ else
 	cmd+=" TARGETS=$TARGETS"
     fi
 
+    if [[ -n "$INSTALL" ]]; then
+       echo "## INSTALL       = $INSTALL"
+       cmd+=" INSTALL_PATH=$KBUILD_OUTPUT/install install"
+    fi
+
     if [[ -n "$PRE_CLEAN" ]]; then
 	(set -x; $cmd clean)
     fi
@@ -44,7 +49,7 @@ else
     (set -x; $cmd)
     rc=$?
     echo "## Selftest build completed rc = $rc"
-    bins=$(find $KBUILD_OUTPUT/ -type f -perm -u+x | wc -l)
+    bins=$(find $KBUILD_OUTPUT/ ! -path "$KBUILD_OUTPUT/install/*" -type f -perm -u+x | wc -l)
     echo "## Found $bins binaries"
 
     if [[ -n "$POST_CLEAN" ]]; then
