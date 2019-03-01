@@ -28,7 +28,7 @@ function get_output_dir()
 	return 1
     fi
 
-    echo "$script_base/../output/$subarch-$distro-$version/$task"
+    echo "$script_base/../output/$subarch@$distro@$version/$task"
     return 0
 }
 
