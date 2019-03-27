@@ -23,7 +23,7 @@ RUN apt-get -q -y update && \
       rsync \
       xz-utils \
       $(/tmp/packages.sh) && \
-    rm -rf /var/lib/apt/lists/* /tmp/packages.sh
+    rm -rf /var/lib/apt/lists/* /tmp/packages.sh /var/cache/* /var/log/dpkg.log
 
 ARG uid
 ARG gid
