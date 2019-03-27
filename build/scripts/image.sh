@@ -14,7 +14,7 @@ IFS=@ read -r task subarch distro version <<< "$1"
 image="linuxppc/build:$distro-$version"
 
 if [[ "$task" == "image" ]]; then
-    exists=$($DOCKER images -q --filter=reference="$image:latest")
+    exists=$($DOCKER images -q --filter=reference="$image")
     if [[ -n "$exists" ]]; then
 	exit 0
     fi
