@@ -18,7 +18,6 @@ IMAGES += image@${1}@${2}
 REBUILD_IMAGES += rebuild-image@${1}@${2}
 endef
 
-#DISTROS := ubuntu@18.10 ubuntu@18.04 ubuntu@16.04 ubuntu@14.04
 DISTROS := ubuntu@18.10 ubuntu@18.04 ubuntu@16.04
 SUBARCHES := ppc64le ppc64
 
