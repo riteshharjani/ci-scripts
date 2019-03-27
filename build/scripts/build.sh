@@ -33,7 +33,7 @@ else
     cross="powerpc64le-linux-gnu-"
 fi
 
-cmd="$DOCKER run -it --rm "
+cmd="$DOCKER run --rm "
 cmd+="--network none "
 cmd+="-w /linux "
 cmd+="-v $SRC:/linux:ro "
