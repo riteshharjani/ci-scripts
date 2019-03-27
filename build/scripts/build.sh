@@ -17,7 +17,7 @@ script_base="$(realpath "$dir")"
 
 IFS=@ read -r task subarch distro version <<< "$1"
 
-image="linuxppc/$distro-$version"
+image="linuxppc/build:$distro-$version"
 
 output_dir=$(get_output_dir "$script_base" "$subarch" "$distro" "$version")
 mkdir -p "$output_dir"

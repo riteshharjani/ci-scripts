@@ -11,7 +11,7 @@ script_base="$(realpath "$dir")"
 
 IFS=@ read -r task subarch distro version <<< "$1"
 
-image="linuxppc/$distro-$version"
+image="linuxppc/build:$distro-$version"
 
 if [[ "$task" == "image" ]]; then
     exists=$($DOCKER images -q --filter=reference="$image:latest")
