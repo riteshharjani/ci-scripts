@@ -7,8 +7,9 @@ version=$(${CROSS_COMPILE}gcc --version | head -1)
 echo "## ARCH          = $ARCH"
 echo "## CROSS_COMPILE = $CROSS_COMPILE"
 echo "## VERSION       = $version"
-echo "## KBUILD_OUTPUT = $KBUILD_OUTPUT"
 echo "## JFACTOR       = $JFACTOR"
+
+export KBUILD_OUTPUT=/output
 
 rc=0
 
@@ -39,7 +40,7 @@ else
 
     if [[ -n "$INSTALL" ]]; then
        echo "## INSTALL       = $INSTALL"
-       cmd+=" INSTALL_PATH=$KBUILD_OUTPUT/install install"
+       cmd+=" INSTALL_PATH=/output/install install"
     fi
 
     if [[ -n "$PRE_CLEAN" ]]; then
@@ -49,7 +50,7 @@ else
     (set -x; $cmd)
     rc=$?
     echo "## Selftest build completed rc = $rc"
-    bins=$(find $KBUILD_OUTPUT/ ! -path "$KBUILD_OUTPUT/install/*" -type f -perm -u+x | wc -l)
+    bins=$(find /output ! -path "/output/install/*" -type f -perm -u+x | wc -l)
     echo "## Found $bins binaries"
 
     if [[ -n "$POST_CLEAN" ]]; then
