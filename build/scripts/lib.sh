@@ -28,7 +28,12 @@ function get_output_dir()
 	return 1
     fi
 
-    echo "$script_base/../output/$subarch@$distro@$version/$task"
+    if [[ -n "$CI_OUTPUT" ]]; then
+        echo "$CI_OUTPUT/$subarch@$distro@$version/$task"
+    else
+        echo "$script_base/../output/$subarch@$distro@$version/$task"
+    fi
+
     return 0
 }
 
