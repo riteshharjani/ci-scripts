@@ -8,10 +8,10 @@ function get_alternate_binds()
     git_dir=$(cd $SRC; git rev-parse --absolute-git-dir)
     alternates="$git_dir/objects/info/alternates"
     if [[ -r "$alternates" ]]; then
-	for line in $(cat "$alternates")
-	do
-	    echo "-v $line:$line:ro "
-	done
+        for line in $(cat "$alternates")
+        do
+            echo "-v $line:$line:ro "
+        done
     fi
 }
 
@@ -24,8 +24,8 @@ function get_output_dir()
     local task="$5" # optional
 
     if [[ -z "$script_base" || -z "$subarch" || -z "$distro" || -z "$version" ]]; then
-	echo "Error: not enough arguments to get_output_dir()" >&2
-	return 1
+        echo "Error: not enough arguments to get_output_dir()" >&2
+        return 1
     fi
 
     if [[ -n "$CI_OUTPUT" ]]; then

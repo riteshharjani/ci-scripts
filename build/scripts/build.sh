@@ -50,7 +50,7 @@ cmd+="-e CROSS_COMPILE=$cross "
 
 if [[ "$task" == "kernel" ]]; then
     if [[ -z "$DEFCONFIG" ]]; then
-	DEFCONFIG="${subarch}_defconfig"
+        DEFCONFIG="${subarch}_defconfig"
     fi
     cmd+="-e DEFCONFIG=$DEFCONFIG "
 fi

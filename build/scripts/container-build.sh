@@ -14,7 +14,7 @@ rc=0
 
 if [[ "$1" == "kernel" ]]; then
     if [[ -n "$PRE_CLEAN" ]]; then
-	(set -x; make clean)
+        (set -x; make clean)
     fi
 
     echo "## DEFCONFIG     = $DEFCONFIG"
@@ -23,18 +23,18 @@ if [[ "$1" == "kernel" ]]; then
     echo "## Kernel build completed rc = $rc"
 
     if [[ -n "$POST_CLEAN" ]]; then
-	(set -x; make clean)
+        (set -x; make clean)
     fi
 else
     cmd="make -j $JFACTOR -C tools/testing/selftests"
 
     if [[ "$1" == "ppctests" ]]; then
-	TARGETS="powerpc"
+        TARGETS="powerpc"
     fi
 
     if [[ -n "$TARGETS" ]]; then
-	echo "## TARGETS       = $TARGETS"
-	cmd+=" TARGETS=$TARGETS"
+        echo "## TARGETS       = $TARGETS"
+        cmd+=" TARGETS=$TARGETS"
     fi
 
     if [[ -n "$INSTALL" ]]; then
@@ -43,7 +43,7 @@ else
     fi
 
     if [[ -n "$PRE_CLEAN" ]]; then
-	(set -x; $cmd clean)
+        (set -x; $cmd clean)
     fi
 
     (set -x; $cmd)
@@ -53,7 +53,7 @@ else
     echo "## Found $bins binaries"
 
     if [[ -n "$POST_CLEAN" ]]; then
-	(set -x; $cmd clean)
+        (set -x; $cmd clean)
     fi
 fi
 
