@@ -19,8 +19,14 @@ if [[ "$1" == "kernel" ]]; then
     fi
 
     echo "## DEFCONFIG     = $DEFCONFIG"
-    (set -x; make $DEFCONFIG; make -j $JFACTOR)
+    (set -x; make $DEFCONFIG)
     rc=$?
+
+    if [[ $rc -eq 0 ]]; then
+         (set -x; make -j $JFACTOR)
+         rc=$?
+    fi
+
     echo "## Kernel build completed rc = $rc"
 
     if [[ -n "$POST_CLEAN" ]]; then
