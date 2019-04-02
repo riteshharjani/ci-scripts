@@ -9,6 +9,7 @@ RUN apt-get -q -y update && \
       bison \
       bsdmainutils \
       bzip2 \
+      ccache \
       file \
       flex \
       gcc \

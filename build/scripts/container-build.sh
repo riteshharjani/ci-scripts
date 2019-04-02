@@ -4,10 +4,18 @@ JFACTOR=${JFACTOR:-1}
 
 version=$(${CROSS_COMPILE}gcc --version | head -1)
 
+if [[ "$CCACHE" -eq 1 ]]; then
+    CROSS_COMPILE="ccache $CROSS_COMPILE"
+fi
+
 echo "## ARCH          = $ARCH"
 echo "## CROSS_COMPILE = $CROSS_COMPILE"
 echo "## VERSION       = $version"
 echo "## JFACTOR       = $JFACTOR"
+
+if [[ -n "$KBUILD_BUILD_TIMESTAMP" ]]; then
+    echo "## KBUILD_TS     = $KBUILD_BUILD_TIMESTAMP"
+fi
 
 export KBUILD_OUTPUT=/output
 
@@ -28,6 +36,10 @@ if [[ "$1" == "kernel" ]]; then
     fi
 
     echo "## Kernel build completed rc = $rc"
+
+    if [[ "$CCACHE" -eq 1 ]]; then
+	ccache -s
+    fi
 
     if [[ -n "$POST_CLEAN" ]]; then
         (set -x; make clean)

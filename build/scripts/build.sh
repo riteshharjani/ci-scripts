@@ -45,6 +45,7 @@ cmd+="-e TARGETS=$TARGETS "
 cmd+="-e INSTALL=$INSTALL "
 cmd+="-e PRE_CLEAN=$PRE_CLEAN "
 cmd+="-e POST_CLEAN=$POST_CLEAN "
+cmd+="-e KBUILD_BUILD_TIMESTAMP=$KBUILD_BUILD_TIMESTAMP "
 cmd+="-e CROSS_COMPILE=$cross "
 
 if [[ "$task" == "kernel" ]]; then
@@ -52,6 +53,11 @@ if [[ "$task" == "kernel" ]]; then
         DEFCONFIG="${subarch}_defconfig"
     fi
     cmd+="-e DEFCONFIG=$DEFCONFIG "
+fi
+
+if [[ -n "$CCACHE" ]]; then
+    cmd+="-v $CCACHE:/home/linuxppc/.ccache "
+    cmd+="-e CCACHE=1 "
 fi
 
 cmd+="$image "
