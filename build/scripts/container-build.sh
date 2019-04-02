@@ -19,19 +19,27 @@ fi
 
 export KBUILD_OUTPUT=/output
 
+if [[ -n "$QUIET" ]]; then
+    quiet="-s"
+fi
+
+if [[ -n "$VERBOSE" ]]; then
+    verbose="V=1"
+fi
+
 rc=0
 
 if [[ "$1" == "kernel" ]]; then
     if [[ -n "$PRE_CLEAN" ]]; then
-        (set -x; make clean)
+        (set -x; make $verbose $quiet clean)
     fi
 
     echo "## DEFCONFIG     = $DEFCONFIG"
-    (set -x; make $DEFCONFIG)
+    (set -x; make $verbose $quiet $DEFCONFIG)
     rc=$?
 
     if [[ $rc -eq 0 ]]; then
-         (set -x; make -j $JFACTOR)
+         (set -x; make $verbose $quiet -j $JFACTOR)
          rc=$?
     fi
 
@@ -42,10 +50,10 @@ if [[ "$1" == "kernel" ]]; then
     fi
 
     if [[ -n "$POST_CLEAN" ]]; then
-        (set -x; make clean)
+        (set -x; make $verbose $quiet clean)
     fi
 else
-    cmd="make -j $JFACTOR -C tools/testing/selftests"
+    cmd="make $quiet -j $JFACTOR -C tools/testing/selftests"
 
     if [[ "$1" == "ppctests" ]]; then
         TARGETS="powerpc"
