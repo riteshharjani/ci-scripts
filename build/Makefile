@@ -1,7 +1,7 @@
 all: help
 
 define TEMPLATE =
-image@${1}@${2} rebuild-image@${1}@${2}:
+image@${1}@${2} rebuild-image@${1}@${2} pull-image@${1}@${2}:
 	@./scripts/image.sh $$@
 
 ppctests@${1}@${2} selftests@${1}@${2} kernel@${1}@${2}: image@${1}@${2}
@@ -15,6 +15,7 @@ SELFTESTS += selftests@${1}@${2}
 CLEAN += clean@${1}@${2}
 KERNEL += kernel@${1}@${2}
 IMAGES += image@${1}@${2}
+PULL_IMAGES += pull-image@${1}@${2}
 REBUILD_IMAGES += rebuild-image@${1}@${2}
 endef
 
@@ -32,9 +33,10 @@ kernel: ${KERNEL}
 ppctests: ${PPCTESTS}
 selftests: ${SELFTESTS}
 images: ${IMAGES}
+pull-images: ${PULL_IMAGES}
 rebuild-images: ${REBUILD_IMAGES}
 
-ALL_TARGETS = ${KERNEL} ${PPCTESTS} ${SELFTESTS} ${IMAGES} ${CLEAN}
+ALL_TARGETS = ${KERNEL} ${PPCTESTS} ${SELFTESTS} ${IMAGES} ${PULL_IMAGES} ${CLEAN}
 .PHONY: ${ALL_TARGETS}
 
 empty:=

@@ -18,6 +18,10 @@ if [[ "$task" == "image" ]]; then
     if [[ -n "$exists" ]]; then
         exit 0
     fi
+elif [[ "$task" == "pull-image" ]]; then
+    cmd="$DOCKER pull $image"
+    (set -x; $cmd)
+    exit $?
 fi
 
 cmd="$DOCKER build --pull -f $distro/Dockerfile "
