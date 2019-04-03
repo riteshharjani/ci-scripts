@@ -20,7 +20,7 @@ if [[ "$task" == "image" ]]; then
     fi
 fi
 
-cmd="$DOCKER build -f $distro/Dockerfile "
+cmd="$DOCKER build --pull -f $distro/Dockerfile "
 
 if [[ -n "$http_proxy" ]]; then
     cmd+="--build-arg http_proxy=$http_proxy "
