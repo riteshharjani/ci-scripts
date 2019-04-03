@@ -44,28 +44,34 @@ space:= $(empty) $(empty)
 TARGET_DISPLAY := $(subst ${space},\n  ,${ALL_TARGETS})
 
 help:
-	@echo 'Build docker images and build kernel and/or selftests inside them.'
+	@echo "Build docker images and build kernel and/or selftests inside them."
 	@echo
-	@echo 'Targets are of the form:'
+	@echo "Targets are of the form:"
 	@echo
-	@echo '  kernel@<sub arch>@<distro & version>'
-	@echo '  ppctests@<sub arch>@<distro & version>'
-	@echo '  selftests@<sub arch>@<distro & version>'
-	@echo '  clean@<sub arch>@<distro & version>'
+	@echo "  kernel@<sub arch>@<distro & version>"
+	@echo "  ppctests@<sub arch>@<distro & version>"
+	@echo "  selftests@<sub arch>@<distro & version>"
+	@echo "  clean@<sub arch>@<distro & version>"
 	@echo
-	@echo 'Valid values for sub arch are:'
-	@echo '   ${SUBARCHES}'
+	@echo "Valid values for sub arch are:"
+	@echo "   ${SUBARCHES}"
 	@echo
-	@echo 'Valid values for distro & version are:'
-	@echo '   ${DISTROS}'
+	@echo "Valid values for distro & version are:"
+	@echo "   ${DISTROS}"
 	@echo
-	@echo 'You can also run all targets of a given type with, eg:'
+	@echo "So for example to build the kernel on ppc64le ubuntu 18.10 you'd use"
 	@echo
-	@echo ' $ make images    # build all images'
-	@echo ' $ make kernel    # build all kernel variants'
-	@echo ' $ make ppctests  # build all powerpc selftest variants'
-	@echo ' $ make selftests # build all selftest variants'
-	@echo ' $ make clean     # clean everything'
+	@echo "  make kernel@ppc64le@ubuntu@18.10"
 	@echo
-	@echo 'All targets:'
+	@echo "You can also run all targets of a given type with, eg:"
+	@echo
+	@echo " $ make images         # build all images if they don't exist"
+	@echo " $ make pull-images    # pull all images from docker hub"
+	@echo " $ make rebuild-images # rebuild all images"
+	@echo " $ make kernel         # build all kernel variants"
+	@echo " $ make ppctests       # build all powerpc selftest variants"
+	@echo " $ make selftests      # build all selftest variants"
+	@echo " $ make clean          # clean everything"
+	@echo
+	@echo "All targets:"
 	@echo -e '  ${TARGET_DISPLAY}'
