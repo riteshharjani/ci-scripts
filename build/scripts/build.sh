@@ -33,10 +33,13 @@ else
     cross="powerpc64le-linux-gnu-"
 fi
 
+user=$(stat -c "%u:%g" $output_dir)
+
 cmd="$DOCKER run --rm "
 cmd+="--network none "
 cmd+="-w /linux "
 cmd+="-v $SRC:/linux:ro "
+cmd+="-u $user "
 cmd+="-v $output_dir:/output:rw "
 cmd+="$alternate_binds "
 cmd+="-e ARCH=powerpc "
@@ -58,7 +61,8 @@ if [[ "$task" == "kernel" ]]; then
 fi
 
 if [[ -n "$CCACHE" ]]; then
-    cmd+="-v $CCACHE:/home/linuxppc/.ccache "
+    cmd+="-v $CCACHE:/ccache "
+    cmd+="-e CCACHE_DIR=/ccache "
     cmd+="-e CCACHE=1 "
 fi
 
