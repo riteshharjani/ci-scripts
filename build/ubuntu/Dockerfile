@@ -20,6 +20,7 @@ RUN apt-get -q -y update && \
       libssl-dev \
       lzop \
       make \
+      openssl \
       u-boot-tools \
       rsync \
       xz-utils \
