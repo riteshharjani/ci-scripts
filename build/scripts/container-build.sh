@@ -45,7 +45,9 @@ if [[ "$1" == "kernel" ]]; then
 
     echo "## Kernel build completed rc = $rc"
 
-    size /output/vmlinux
+    if [[ -f /output/vmlinux ]]; then
+        size /output/vmlinux
+    fi
 
     if [[ "$CCACHE" -eq 1 ]]; then
 	ccache -s
