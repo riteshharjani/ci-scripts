@@ -34,8 +34,16 @@ if [[ -n "$https_proxy" ]]; then
     cmd+="--build-arg https_proxy=$https_proxy "
 fi
 
-cmd+="--build-arg uid=$(id -u) "
-cmd+="--build-arg gid=$(id -g) "
+if [[ -z "$UID" ]]; then
+    UID=$(id -u)
+fi
+
+if [[ -z "$GID" ]]; then
+    GID=$(id -g)
+fi
+
+cmd+="--build-arg uid=$UID "
+cmd+="--build-arg gid=$GID "
 cmd+="--build-arg from=$distro:$version "
 cmd+="-t $image ."
 
