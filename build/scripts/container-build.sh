@@ -34,8 +34,14 @@ if [[ "$1" == "kernel" ]]; then
         (set -x; make $verbose $quiet clean)
     fi
 
-    echo "## DEFCONFIG     = $DEFCONFIG"
-    (set -x; make $verbose $quiet $DEFCONFIG)
+    if [[ "$DEFCONFIG" == .config* ]]; then
+	echo "## Using existing config $DEFCONFIG"
+	cp "$DEFCONFIG" /output/.config
+    else
+	echo "## DEFCONFIG     = $DEFCONFIG"
+	(set -x; make $verbose $quiet $DEFCONFIG)
+    fi
+
     rc=$?
 
     if [[ $rc -eq 0 ]]; then
