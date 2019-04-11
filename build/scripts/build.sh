@@ -33,13 +33,19 @@ else
     cross="powerpc64le-linux-gnu-"
 fi
 
-user=$(stat -c "%u:%g" $output_dir)
-
 cmd="$DOCKER run --rm "
+
+if [[ -t 0 ]]; then
+    cmd+="-it "
+fi
+
 cmd+="--network none "
 cmd+="-w /linux "
 cmd+="-v $SRC:/linux:ro "
+
+user=$(stat -c "%u:%g" $output_dir)
 cmd+="-u $user "
+
 cmd+="-v $output_dir:/output:rw "
 cmd+="$alternate_binds "
 cmd+="-e ARCH=powerpc "
