@@ -72,6 +72,12 @@ if [[ -n "$CCACHE" ]]; then
     cmd+="-e CCACHE=1 "
 fi
 
+if [[ -n "$DOCKER_EXTRA_ARGS" ]]; then
+    # Can be used for eg. a rootdisk.
+    # DOCKER_EXTRA_ARGS="-v /path/to/rootdisk:/path/to/rootdisk:ro"
+    cmd+="$DOCKER_EXTRA_ARGS "
+fi
+
 cmd+="$image "
 cmd+="/bin/container-build.sh $task"
 
