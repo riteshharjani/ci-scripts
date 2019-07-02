@@ -46,7 +46,6 @@ cmd+="-v $SRC:/linux:ro "
 user=$(stat -c "%u:%g" $output_dir)
 cmd+="-u $user "
 
-cmd+="-v $output_dir:/output:rw "
 cmd+="$alternate_binds "
 cmd+="-e ARCH=powerpc "
 cmd+="-e JFACTOR=$JFACTOR "
@@ -64,7 +63,12 @@ if [[ "$task" == "kernel" ]]; then
         DEFCONFIG="${subarch}_defconfig"
     fi
     cmd+="-e DEFCONFIG=$DEFCONFIG "
+
+    output_dir="$output_dir/$DEFCONFIG"
+    mkdir -p "$output_dir"
 fi
+
+cmd+="-v $output_dir:/output:rw "
 
 if [[ -n "$CCACHE" ]]; then
     cmd+="-v $CCACHE:/ccache "
