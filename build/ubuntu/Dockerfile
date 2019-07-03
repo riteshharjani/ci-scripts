@@ -35,5 +35,3 @@ RUN useradd --uid $uid --gid $gid linuxppc
 USER linuxppc
 
 COPY scripts/container-build.sh /bin/container-build.sh
-
-ENV PATH=$PATH:/ppc64/bin:/ppc64le/bin
