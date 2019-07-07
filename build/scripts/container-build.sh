@@ -2,15 +2,17 @@
 
 JFACTOR=${JFACTOR:-1}
 
-version=$(${CROSS_COMPILE}gcc --version | head -1)
-
 if [[ "$CCACHE" -eq 1 ]]; then
     CROSS_COMPILE="ccache $CROSS_COMPILE"
 fi
 
+gcc_version=$(${CROSS_COMPILE}gcc --version | head -1)
+ld_version=$(${CROSS_COMPILE}ld --version | head -1)
+
 echo "## ARCH          = $ARCH"
 echo "## CROSS_COMPILE = $CROSS_COMPILE"
-echo "## VERSION       = $version"
+echo "## VERSION (gcc) = $gcc_version"
+echo "## VERSION (ld)  = $ld_version"
 echo "## JFACTOR       = $JFACTOR"
 
 if [[ -n "$KBUILD_BUILD_TIMESTAMP" ]]; then
