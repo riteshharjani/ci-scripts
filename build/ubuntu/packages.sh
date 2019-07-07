@@ -17,6 +17,8 @@ elif [[ "$VERSION_ID" == "18.04" ]]; then
     PACKAGES+=" gcc-7-multilib-powerpc-linux-gnu"
 elif [[ "$VERSION_ID" == "18.10" ]]; then
     PACKAGES+=" gcc-8-multilib-powerpc-linux-gnu"
+elif [[ "$VERSION_ID" == "19.04" ]]; then
+    PACKAGES+=" gcc-8-multilib-powerpc-linux-gnu"
 fi
 
 if [[ "$machine" == "ppc64le" ]]; then
@@ -25,7 +27,8 @@ if [[ "$machine" == "ppc64le" ]]; then
     PACKAGES+=" libnuma-dev"
     PACKAGES+=" libpopt-dev"
 
-    if [[ "$VERSION_ID" == "18.10" ]]; then
+    major="${VERSION_ID%%.*}"
+    if [[ $major -ge 18 ]]; then
         PACKAGES+=" clang llvm"
     fi
 else

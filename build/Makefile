@@ -19,7 +19,7 @@ PULL_IMAGES += pull-image@${1}@${2}
 REBUILD_IMAGES += rebuild-image@${1}@${2}
 endef
 
-DISTROS := ubuntu@18.10 ubuntu@18.04 ubuntu@16.04
+DISTROS := ubuntu@19.04 ubuntu@18.10 ubuntu@18.04 ubuntu@16.04
 SUBARCHES := ppc64le ppc64
 
 $(foreach distro,${DISTROS}, \
