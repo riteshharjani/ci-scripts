@@ -45,6 +45,7 @@ fi
 cmd+="--build-arg uid=$UID "
 cmd+="--build-arg gid=$GID "
 cmd+="--build-arg from=$distro:$version "
+cmd+="--build-arg apt_mirror=$APT_MIRROR "
 cmd+="-t $image-$(uname -m) "
 cmd+="-t $image ."
 

@@ -3,6 +3,10 @@ FROM ${from}
 
 COPY ubuntu/packages.sh /tmp/packages.sh
 
+ARG apt_mirror
+ENV apt_mirror=${apt_mirror}
+RUN [ -n "$apt_mirror" ] && sed -i -e "s|ports.ubuntu.com|$apt_mirror|" /etc/apt/sources.list || true
+
 RUN apt-get -q -y update && \
     apt-get -q -y install --no-install-recommends \
       bc \
