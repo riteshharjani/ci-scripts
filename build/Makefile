@@ -25,10 +25,11 @@ PPCTESTS += ppctests@${1}@${2}
 SELFTESTS += selftests@${1}@${2}
 endef
 
-DISTROS := ubuntu@19.04 ubuntu@18.10 ubuntu@18.04 ubuntu@16.04
+SELFTEST_DISTROS := ubuntu@19.04 ubuntu@18.10 ubuntu@18.04 ubuntu@16.04
+ALL_DISTROS := ${SELFTEST_DISTROS}
 SUBARCHES := ppc64le ppc64
 
-$(foreach distro,${DISTROS}, \
+$(foreach distro,${SELFTEST_DISTROS}, \
 	$(foreach subarch,${SUBARCHES}, \
 		$(eval $(call MAIN_TEMPLATE,${subarch},${distro})) \
 	) \
@@ -66,11 +67,14 @@ help:
 	@echo "   ${SUBARCHES}"
 	@echo
 	@echo "Valid values for distro & version are:"
-	@echo "   ${DISTROS}"
+	@echo "   ${ALL_DISTROS}"
 	@echo
 	@echo "So for example to build the kernel on ppc64le ubuntu 18.10 you'd use"
 	@echo
 	@echo "  make kernel@ppc64le@ubuntu@18.10"
+	@echo
+	@echo "However note that not all combinations are valid, as some distros"
+	@echo "can't cross build the selftests."
 	@echo
 	@echo "You can also run all targets of a given type with, eg:"
 	@echo
