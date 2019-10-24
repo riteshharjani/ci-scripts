@@ -25,7 +25,7 @@ PPCTESTS += ppctests@${1}@${2}
 SELFTESTS += selftests@${1}@${2}
 endef
 
-SELFTEST_DISTROS := ubuntu@19.04 ubuntu@18.10 ubuntu@18.04 ubuntu@16.04
+SELFTEST_DISTROS := ubuntu@19.10 ubuntu@19.04 ubuntu@18.10 ubuntu@18.04 ubuntu@16.04
 BE_DISTROS := korg@4.6
 ALL_DISTROS := ${SELFTEST_DISTROS} ${BE_DISTROS}
 SUBARCHES := ppc64le ppc64
