@@ -26,8 +26,13 @@ SELFTESTS += selftests@${1}@${2}
 endef
 
 SELFTEST_DISTROS := ubuntu@19.04 ubuntu@18.10 ubuntu@18.04 ubuntu@16.04
-ALL_DISTROS := ${SELFTEST_DISTROS}
+BE_DISTROS := korg@4.6
+ALL_DISTROS := ${SELFTEST_DISTROS} ${BE_DISTROS}
 SUBARCHES := ppc64le ppc64
+
+$(foreach distro,${BE_DISTROS}, \
+	$(eval $(call MAIN_TEMPLATE,ppc64,${distro})) \
+)
 
 $(foreach distro,${SELFTEST_DISTROS}, \
 	$(foreach subarch,${SUBARCHES}, \
