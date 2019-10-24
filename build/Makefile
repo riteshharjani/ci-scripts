@@ -1,17 +1,15 @@
 all: help
 
-define TEMPLATE =
+define MAIN_TEMPLATE =
 image@${1}@${2} rebuild-image@${1}@${2} pull-image@${1}@${2}:
 	@./scripts/image.sh $$@
 
-ppctests@${1}@${2} selftests@${1}@${2} kernel@${1}@${2}: image@${1}@${2}
+kernel@${1}@${2}: image@${1}@${2}
 	@./scripts/build.sh $$@
 
 clean@${1}@${2}:
 	@./scripts/clean.sh $$@
 
-PPCTESTS += ppctests@${1}@${2}
-SELFTESTS += selftests@${1}@${2}
 CLEAN += clean@${1}@${2}
 KERNEL += kernel@${1}@${2}
 IMAGES += image@${1}@${2}
@@ -19,12 +17,23 @@ PULL_IMAGES += pull-image@${1}@${2}
 REBUILD_IMAGES += rebuild-image@${1}@${2}
 endef
 
+define SELFTESTS_TEMPLATE =
+ppctests@${1}@${2} selftests@${1}@${2}: image@${1}@${2}
+	@./scripts/build.sh $$@
+
+PPCTESTS += ppctests@${1}@${2}
+SELFTESTS += selftests@${1}@${2}
+endef
+
 DISTROS := ubuntu@19.04 ubuntu@18.10 ubuntu@18.04 ubuntu@16.04
 SUBARCHES := ppc64le ppc64
 
 $(foreach distro,${DISTROS}, \
 	$(foreach subarch,${SUBARCHES}, \
-		$(eval $(call TEMPLATE,${subarch},${distro})) \
+		$(eval $(call MAIN_TEMPLATE,${subarch},${distro})) \
+	) \
+	$(foreach subarch,${SUBARCHES}, \
+		$(eval $(call SELFTESTS_TEMPLATE,${subarch},${distro})) \
 	) \
 )
 
