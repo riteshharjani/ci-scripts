@@ -19,6 +19,8 @@ elif [[ "$VERSION_ID" == "18.10" ]]; then
     PACKAGES+=" gcc-8-multilib-powerpc-linux-gnu"
 elif [[ "$VERSION_ID" == "19.04" ]]; then
     PACKAGES+=" gcc-8-multilib-powerpc-linux-gnu"
+elif [[ "$VERSION_ID" == "19.10" ]]; then
+    PACKAGES+=" gcc-9-multilib-powerpc-linux-gnu"
 fi
 
 if [[ "$machine" == "ppc64le" ]]; then
