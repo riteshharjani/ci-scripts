@@ -22,6 +22,11 @@ elif [[ "$task" == "pull-image" ]]; then
     cmd="$DOCKER pull $image"
     (set -x; $cmd)
     exit $?
+elif [[ "$task" == "push-image" ]]; then
+    image="$image-$(uname -m)"
+    cmd="$DOCKER push $image"
+    (set -x; $cmd)
+    exit $?
 fi
 
 cmd="$DOCKER build --pull -f $distro/Dockerfile "

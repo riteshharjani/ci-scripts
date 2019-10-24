@@ -1,7 +1,7 @@
 all: help
 
 define MAIN_TEMPLATE =
-image@${1}@${2} rebuild-image@${1}@${2} pull-image@${1}@${2}:
+image@${1}@${2} rebuild-image@${1}@${2} pull-image@${1}@${2} push-image@${1}@${2}:
 	@./scripts/image.sh $$@
 
 kernel@${1}@${2}: image@${1}@${2}
@@ -15,6 +15,7 @@ KERNEL += kernel@${1}@${2}
 IMAGES += image@${1}@${2}
 PULL_IMAGES += pull-image@${1}@${2}
 REBUILD_IMAGES += rebuild-image@${1}@${2}
+PUSH_IMAGES += push-image@${1}@${2}
 endef
 
 define SELFTESTS_TEMPLATE =
@@ -52,6 +53,7 @@ selftests: ${SELFTESTS}
 images: ${IMAGES}
 pull-images: ${PULL_IMAGES}
 rebuild-images: ${REBUILD_IMAGES}
+push-images: ${PUSH_IMAGES}
 
 ALL_TARGETS = ${KERNEL} ${PPCTESTS} ${SELFTESTS} ${IMAGES} ${PULL_IMAGES} ${CLEAN}
 .PHONY: ${ALL_TARGETS}
