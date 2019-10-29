@@ -55,8 +55,11 @@ cmd+="-e QUIET=$QUIET "
 cmd+="-e VERBOSE=$VERBOSE "
 cmd+="-e PRE_CLEAN=$PRE_CLEAN "
 cmd+="-e POST_CLEAN=$POST_CLEAN "
-cmd+="-e KBUILD_BUILD_TIMESTAMP=$KBUILD_BUILD_TIMESTAMP "
 cmd+="-e CROSS_COMPILE=$cross "
+
+if [[ -n "$KBUILD_BUILD_TIMESTAMP" ]]; then
+    cmd+="-e KBUILD_BUILD_TIMESTAMP=$KBUILD_BUILD_TIMESTAMP "
+fi
 
 if [[ "$task" == "kernel" ]]; then
     if [[ -z "$DEFCONFIG" ]]; then
