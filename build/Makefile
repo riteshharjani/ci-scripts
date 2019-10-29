@@ -4,18 +4,21 @@ define MAIN_TEMPLATE =
 image@${1}@${2} rebuild-image@${1}@${2} pull-image@${1}@${2} push-image@${1}@${2}:
 	@./scripts/image.sh $$@
 
-kernel@${1}@${2}: image@${1}@${2}
-	@./scripts/build.sh $$@
-
 clean@${1}@${2}:
 	@./scripts/clean.sh $$@
 
 CLEAN += clean@${1}@${2}
-KERNEL += kernel@${1}@${2}
 IMAGES += image@${1}@${2}
 PULL_IMAGES += pull-image@${1}@${2}
 REBUILD_IMAGES += rebuild-image@${1}@${2}
 PUSH_IMAGES += push-image@${1}@${2}
+endef
+
+define KERNEL_TEMPLATE =
+kernel@${1}@${2}: image@${1}@${2}
+	@./scripts/build.sh $$@
+
+KERNEL += kernel@${1}@${2}
 endef
 
 define SELFTESTS_TEMPLATE =
@@ -35,11 +38,15 @@ SUBARCHES := ppc64le ppc64
 
 $(foreach distro,${BE_DISTROS}, \
 	$(eval $(call MAIN_TEMPLATE,ppc64,${distro})) \
+	$(eval $(call KERNEL_TEMPLATE,ppc64,${distro})) \
 )
 
 $(foreach distro,${SELFTEST_DISTROS}, \
 	$(foreach subarch,${SUBARCHES}, \
 		$(eval $(call MAIN_TEMPLATE,${subarch},${distro})) \
+	) \
+	$(foreach subarch,${SUBARCHES}, \
+		$(eval $(call KERNEL_TEMPLATE,${subarch},${distro})) \
 	) \
 	$(foreach subarch,${SUBARCHES}, \
 		$(eval $(call SELFTESTS_TEMPLATE,${subarch},${distro})) \
