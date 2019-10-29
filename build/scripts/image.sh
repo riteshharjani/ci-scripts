@@ -47,6 +47,10 @@ if [[ -z "$GID" ]]; then
     GID=$(id -g)
 fi
 
+if [[ "$distro" == "docs" ]]; then
+    distro=ubuntu
+fi
+
 cmd+="--build-arg uid=$UID "
 cmd+="--build-arg gid=$GID "
 cmd+="--build-arg from=$distro:$version "

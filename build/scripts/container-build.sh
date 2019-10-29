@@ -64,6 +64,17 @@ if [[ "$1" == "kernel" ]]; then
     if [[ -n "$POST_CLEAN" ]]; then
         (set -x; make $verbose $quiet clean)
     fi
+elif [[ "$1" == "docs" ]]; then
+    (set -x; make $verbose $quiet -j $JFACTOR htmldocs 2>&1 | tee /output/docs.log)
+    rc=$?
+
+    if [[ $rc -eq 0 ]]; then
+	grep -i "\bpowerpc\b.*warning" /output/docs.log
+	if [[ $? -eq 0 ]]; then
+	    echo "## Error, saw powerpc errors/warnings in docs build!"
+	    rc=1
+	fi
+    fi
 else
     cmd="make $quiet -j $JFACTOR -C tools/testing/selftests"
 

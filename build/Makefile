@@ -29,12 +29,23 @@ PPCTESTS += ppctests@${1}@${2}
 SELFTESTS += selftests@${1}@${2}
 endef
 
+define DOCS_TEMPLATE =
+docs@${1}@${2}: image@${1}@${2}
+	@./scripts/build.sh $$@
+
+DOCS += docs@${1}@${2}
+endef
+
 SELFTEST_DISTROS := ubuntu@19.10 ubuntu@19.04 ubuntu@18.10 ubuntu@18.04 ubuntu@16.04
 ifeq ($(shell uname -m),x86_64)
 BE_DISTROS := korg@4.6
 endif
+DOCS_DISTRO := docs@19.10
 ALL_DISTROS := ${SELFTEST_DISTROS} ${BE_DISTROS}
 SUBARCHES := ppc64le ppc64
+
+$(eval $(call MAIN_TEMPLATE,ppc64le,${DOCS_DISTRO}))
+$(eval $(call DOCS_TEMPLATE,ppc64le,${DOCS_DISTRO}))
 
 $(foreach distro,${BE_DISTROS}, \
 	$(eval $(call MAIN_TEMPLATE,ppc64,${distro})) \
@@ -61,8 +72,9 @@ images: ${IMAGES}
 pull-images: ${PULL_IMAGES}
 rebuild-images: ${REBUILD_IMAGES}
 push-images: ${PUSH_IMAGES}
+docs: ${DOCS}
 
-ALL_TARGETS = ${KERNEL} ${PPCTESTS} ${SELFTESTS} ${IMAGES} ${PULL_IMAGES} ${CLEAN}
+ALL_TARGETS = ${KERNEL} ${PPCTESTS} ${SELFTESTS} ${IMAGES} ${PULL_IMAGES} ${DOCS} ${CLEAN}
 .PHONY: ${ALL_TARGETS}
 
 empty:=
