@@ -40,8 +40,9 @@ SELFTEST_DISTROS := ubuntu@19.10 ubuntu@19.04 ubuntu@18.10 ubuntu@18.04 ubuntu@1
 ifeq ($(shell uname -m),x86_64)
 BE_DISTROS := korg@4.6.3
 endif
+KERNEL_DISTROS := korg@8.1.0
 DOCS_DISTRO := docs@19.10
-ALL_DISTROS := ${SELFTEST_DISTROS} ${BE_DISTROS}
+ALL_DISTROS := ${SELFTEST_DISTROS} ${BE_DISTROS} ${KERNEL_DISTROS}
 SUBARCHES := ppc64le ppc64
 
 $(eval $(call MAIN_TEMPLATE,ppc64le,${DOCS_DISTRO}))
@@ -50,6 +51,15 @@ $(eval $(call DOCS_TEMPLATE,ppc64le,${DOCS_DISTRO}))
 $(foreach distro,${BE_DISTROS}, \
 	$(eval $(call MAIN_TEMPLATE,ppc64,${distro})) \
 	$(eval $(call KERNEL_TEMPLATE,ppc64,${distro})) \
+)
+
+$(foreach distro,${KERNEL_DISTROS}, \
+	$(foreach subarch,${SUBARCHES}, \
+		$(eval $(call MAIN_TEMPLATE,${subarch},${distro})) \
+	) \
+	$(foreach subarch,${SUBARCHES}, \
+		$(eval $(call KERNEL_TEMPLATE,${subarch},${distro})) \
+	) \
 )
 
 $(foreach distro,${SELFTEST_DISTROS}, \
