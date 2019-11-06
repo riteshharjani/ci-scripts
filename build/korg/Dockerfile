@@ -31,21 +31,23 @@ RUN apt-get -q -y update && \
       && \
     rm -rf /var/lib/apt/lists/* /var/cache/* /var/log/dpkg.log
 
-ENV base_url=https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/4.6.3/
-ENV tar_file=x86_64-gcc-4.6.3-nolibc_powerpc64-linux.tar.xz
-ENV sum_file=sha256sums.asc
+ARG compiler_version
+ARG tar_file
+ARG base_url
 
+RUN echo $base_url
+RUN echo $tar_file
 RUN curl -sSL $base_url/$tar_file > $tar_file && \
-    curl -sSL $base_url/$sum_file > $sum_file && \
-    grep $tar_file $sum_file | sha256sum -c && \
+    curl -sSL $base_url/sha256sums.asc > sha256sums.asc && \
+    grep $tar_file sha256sums.asc | sha256sum -c && \
     tar -xf $tar_file -C /opt && \
-    rm $tar_file $sum_file
+    rm $tar_file sha256sums.asc
 
-RUN cd /opt/gcc-4.6.3-nolibc/powerpc64-linux/bin && \
+RUN cd /opt/gcc-${compiler_version}-nolibc/powerpc64-linux/bin && \
     rename s/powerpc64-linux-/powerpc-linux-gnu-/ powerpc64-linux-*
 
 RUN cd /usr/bin && \
-    ln -s /opt/gcc-4.6.3-nolibc/powerpc64-linux/bin/* .
+    ln -s /opt/gcc-${compiler_version}-nolibc/powerpc64-linux/bin/* .
 
 ARG uid
 ARG gid

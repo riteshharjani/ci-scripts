@@ -49,6 +49,17 @@ fi
 
 if [[ "$distro" == "docs" ]]; then
     distro=ubuntu
+elif [[ "$distro" == "korg" ]]; then
+    cmd+="--build-arg compiler_version=$version "
+
+    arch=$(uname -m)
+
+    cmd+="--build-arg base_url=https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/${arch}/${version}/ "
+    if [[ "$version" == "4.6.3" ]]; then
+	cmd+="--build-arg tar_file=${arch}-gcc-${version}-nolibc_powerpc64-linux.tar.xz "
+    else
+	cmd+="--build-arg tar_file=${arch}-gcc-${version}-nolibc-powerpc64-linux.tar.xz "
+    fi
 fi
 
 cmd+="--build-arg uid=$UID "
