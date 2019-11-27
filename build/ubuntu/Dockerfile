@@ -28,6 +28,7 @@ RUN apt-get -q -y update && \
       openssl \
       u-boot-tools \
       rsync \
+      sparse \
       xz-utils \
       $(/tmp/packages.sh) && \
     rm -rf /var/lib/apt/lists/* /tmp/packages.sh /var/cache/* /var/log/dpkg.log
