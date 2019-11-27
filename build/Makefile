@@ -40,7 +40,7 @@ SELFTEST_DISTROS := ubuntu@19.10 ubuntu@19.04 ubuntu@18.10 ubuntu@18.04 ubuntu@1
 ifeq ($(shell uname -m),x86_64)
 BE_DISTROS := korg@4.6.3
 endif
-KERNEL_DISTROS := korg@8.1.0
+KERNEL_DISTROS := korg@8.1.0 korg@4.9.4
 DOCS_DISTRO := docs@19.10
 ALL_DISTROS := ${SELFTEST_DISTROS} ${BE_DISTROS} ${KERNEL_DISTROS}
 SUBARCHES := ppc64le ppc64
