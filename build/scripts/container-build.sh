@@ -2,17 +2,19 @@
 
 JFACTOR=${JFACTOR:-1}
 
-if [[ "$CCACHE" -eq 1 ]]; then
-    CROSS_COMPILE="ccache $CROSS_COMPILE"
-fi
-
 gcc_version=$(${CROSS_COMPILE}gcc --version | head -1)
 ld_version=$(${CROSS_COMPILE}ld --version | head -1)
 
 echo "## ARCH          = $ARCH"
 echo "## CROSS_COMPILE = $CROSS_COMPILE"
-echo "## VERSION (gcc) = $gcc_version"
-echo "## VERSION (ld)  = $ld_version"
+echo "## gcc           = $gcc_version"
+
+if [[ -n "$CLANG" ]]; then
+       clang_version=$(clang --version | head -1)
+       echo "## clang         = $clang_version"
+fi
+
+echo "## ld            = $ld_version"
 echo "## JFACTOR       = $JFACTOR"
 
 if [[ -n "$KBUILD_BUILD_TIMESTAMP" ]]; then
@@ -32,8 +34,19 @@ fi
 rc=0
 
 if [[ "$1" == "kernel" ]]; then
+    cc="${CROSS_COMPILE}gcc"
+    if [[ -n "$CLANG" ]]; then
+        cc="clang"
+    fi
+
+    if [[ "$CCACHE" -eq 1 ]]; then
+        cc="ccache $cc"
+    fi
+
+    cc="CC=$cc"
+
     if [[ -n "$PRE_CLEAN" ]]; then
-        (set -x; make $verbose $quiet clean)
+        (set -x; make $verbose $quiet "$cc" clean)
     fi
 
     if [[ "$DEFCONFIG" == .config* ]]; then
@@ -41,7 +54,7 @@ if [[ "$1" == "kernel" ]]; then
 	cp "$DEFCONFIG" /output/.config
     else
 	echo "## DEFCONFIG     = $DEFCONFIG"
-	(set -x; make $verbose $quiet $DEFCONFIG)
+	(set -x; make $verbose $quiet "$cc" $DEFCONFIG)
     fi
 
     rc=$?
@@ -50,7 +63,7 @@ if [[ "$1" == "kernel" ]]; then
         if [[ -n "$SPARSE" ]]; then
             rm -f /output/sparse.log
             touch /output/sparse.log
-            (set -x; make C=2 CF=">> /output/sparse.log 2>&1" $verbose $quiet -j $JFACTOR)
+            (set -x; make C=2 CF=">> /output/sparse.log 2>&1" $verbose $quiet "$cc" -j $JFACTOR)
 
             rc=$?
 
@@ -59,7 +72,7 @@ if [[ "$1" == "kernel" ]]; then
                 rc=$?
             fi
         else
-            (set -x; make $verbose $quiet -j $JFACTOR)
+            (set -x; make $verbose $quiet "$cc" -j $JFACTOR)
             rc=$?
         fi
     fi
@@ -75,7 +88,7 @@ if [[ "$1" == "kernel" ]]; then
     fi
 
     if [[ -n "$POST_CLEAN" ]]; then
-        (set -x; make $verbose $quiet clean)
+        (set -x; make $verbose $quiet "$cc" clean)
     fi
 elif [[ "$1" == "docs" ]]; then
     (set -x; make $verbose $quiet -j $JFACTOR htmldocs 2>&1 | tee /output/docs.log)

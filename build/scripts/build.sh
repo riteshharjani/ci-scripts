@@ -69,6 +69,12 @@ if [[ "$task" == "kernel" ]]; then
     cmd+="-e DEFCONFIG=$DEFCONFIG "
 
     output_dir="$output_dir/$DEFCONFIG"
+
+    if [[ -n "$CLANG" ]]; then
+       output_dir="${output_dir}_clang"
+        cmd+="-e CLANG=1 "
+    fi
+
     mkdir -p "$output_dir"
 fi
 
