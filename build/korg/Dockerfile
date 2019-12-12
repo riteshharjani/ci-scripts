@@ -12,6 +12,7 @@ RUN apt-get -q -y update && \
       bzip2 \
       ca-certificates \
       ccache \
+      cpio \
       curl \
       file \
       flex \

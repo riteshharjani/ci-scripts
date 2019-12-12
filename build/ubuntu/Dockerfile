@@ -15,6 +15,7 @@ RUN apt-get -q -y update && \
       bsdmainutils \
       bzip2 \
       ccache \
+      cpio \
       file \
       flex \
       gcc \
