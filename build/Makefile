@@ -1,6 +1,11 @@
 all: help
 
+VERSION:
+	@(git describe --always --long --dirty --abbrev=40) > VERSION
+
 define MAIN_TEMPLATE =
+image@${1}@${2} rebuild-image@${1}@${2}: VERSION
+
 image@${1}@${2} rebuild-image@${1}@${2} pull-image@${1}@${2} push-image@${1}@${2}:
 	@./scripts/image.sh $$@
 
@@ -75,6 +80,8 @@ $(foreach distro,${SELFTEST_DISTROS}, \
 )
 
 clean: ${CLEAN}
+	rm -f VERSION
+
 kernel: ${KERNEL}
 ppctests: ${PPCTESTS}
 selftests: ${SELFTESTS}
@@ -85,7 +92,7 @@ push-images: ${PUSH_IMAGES}
 docs: ${DOCS}
 
 ALL_TARGETS = ${KERNEL} ${PPCTESTS} ${SELFTESTS} ${IMAGES} ${PULL_IMAGES} ${DOCS} ${CLEAN}
-.PHONY: ${ALL_TARGETS}
+.PHONY: ${ALL_TARGETS} VERSION
 
 empty:=
 space:= $(empty) $(empty)

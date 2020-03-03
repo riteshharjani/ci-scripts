@@ -58,3 +58,4 @@ RUN useradd --uid $uid --gid $gid linuxppc
 USER linuxppc
 
 COPY scripts/container-build.sh /bin/container-build.sh
+COPY VERSION /VERSION

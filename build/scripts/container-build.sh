@@ -5,6 +5,7 @@ JFACTOR=${JFACTOR:-1}
 gcc_version=$(${CROSS_COMPILE}gcc --version | head -1)
 ld_version=$(${CROSS_COMPILE}ld --version | head -1)
 
+echo "## VERSION       = $(cat /VERSION)"
 echo "## ARCH          = $ARCH"
 echo "## CROSS_COMPILE = $CROSS_COMPILE"
 echo "## gcc           = $gcc_version"
