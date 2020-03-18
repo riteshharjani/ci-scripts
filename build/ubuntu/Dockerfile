@@ -22,6 +22,7 @@ RUN apt-get -q -y update && \
       git \
       libc-dev \
       libelf-dev \
+      libfuse-dev \
       liblz4-tool \
       libssl-dev \
       lzop \
