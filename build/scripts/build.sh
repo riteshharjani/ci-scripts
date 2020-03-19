@@ -81,6 +81,10 @@ if [[ -n $POST_CLEAN ]]; then
     cmd+="-e POST_CLEAN=$POST_CLEAN "
 fi
 
+if [[ -n $MODULES ]]; then
+    cmd+="-e MODULES=$MODULES "
+fi
+
 cmd+="-e CROSS_COMPILE=$cross "
 
 if [[ -n "$KBUILD_BUILD_TIMESTAMP" ]]; then
