@@ -20,6 +20,7 @@ RUN apt-get -q -y update && \
       flex \
       gcc \
       git \
+      kmod \
       libc-dev \
       libelf-dev \
       libfuse-dev \
