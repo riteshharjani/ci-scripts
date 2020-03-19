@@ -48,14 +48,39 @@ cmd+="-u $user "
 
 cmd+="$alternate_binds "
 cmd+="-e ARCH=powerpc "
-cmd+="-e JFACTOR=$JFACTOR "
-cmd+="-e TARGETS=$TARGETS "
-cmd+="-e INSTALL=$INSTALL "
-cmd+="-e QUIET=$QUIET "
-cmd+="-e VERBOSE=$VERBOSE "
-cmd+="-e SPARSE=$SPARSE "
-cmd+="-e PRE_CLEAN=$PRE_CLEAN "
-cmd+="-e POST_CLEAN=$POST_CLEAN "
+
+if [[ -n $JFACTOR ]]; then
+    cmd+="-e JFACTOR=$JFACTOR "
+fi
+
+if [[ -n $TARGETS ]]; then
+    cmd+="-e TARGETS=$TARGETS "
+fi
+
+if [[ -n $INSTALL ]]; then
+    cmd+="-e INSTALL=$INSTALL "
+fi
+
+if [[ -n $QUIET ]]; then
+    cmd+="-e QUIET=$QUIET "
+fi
+
+if [[ -n $VERBOSE ]]; then
+    cmd+="-e VERBOSE=$VERBOSE "
+fi
+
+if [[ -n $SPARSE ]]; then
+    cmd+="-e SPARSE=$SPARSE "
+fi
+
+if [[ -n $PRE_CLEAN ]]; then
+    cmd+="-e PRE_CLEAN=$PRE_CLEAN "
+fi
+
+if [[ -n $POST_CLEAN ]]; then
+    cmd+="-e POST_CLEAN=$POST_CLEAN "
+fi
+
 cmd+="-e CROSS_COMPILE=$cross "
 
 if [[ -n "$KBUILD_BUILD_TIMESTAMP" ]]; then
