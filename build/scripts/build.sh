@@ -97,6 +97,10 @@ if [[ "$task" == "kernel" ]]; then
     fi
     cmd+="-e DEFCONFIG=$DEFCONFIG "
 
+    if [[ -n "$MERGE_CONFIG" ]]; then
+	cmd+="-e MERGE_CONFIG=$MERGE_CONFIG "
+    fi
+
     output_dir="$output_dir/$DEFCONFIG"
 
     if [[ -n "$CLANG" ]]; then

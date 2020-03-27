@@ -58,6 +58,17 @@ if [[ "$1" == "kernel" ]]; then
 	(set -x; make $verbose $quiet "$cc" $DEFCONFIG)
     fi
 
+    if [[ -n "$MERGE_CONFIG" ]]; then
+        echo "## MERGE_CONFIG  = $MERGE_CONFIG"
+
+        # Split the comma separated list
+        IFS=',' read -r -a configs <<< "$MERGE_CONFIG"
+
+        # merge_config.sh always writes its TMP files to $PWD, so we have to
+        # change into /output before running it.
+        (cd /output; set -x; /linux/scripts/kconfig/merge_config.sh .config ${configs[@]})
+    fi
+
     rc=$?
 
     if [[ $rc -eq 0 ]]; then
