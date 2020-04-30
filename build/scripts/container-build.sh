@@ -51,11 +51,11 @@ if [[ "$1" == "kernel" ]]; then
     fi
 
     if [[ "$DEFCONFIG" == .config* ]]; then
-	echo "## Using existing config $DEFCONFIG"
-	cp "$DEFCONFIG" /output/.config
+        echo "## Using existing config $DEFCONFIG"
+        cp "$DEFCONFIG" /output/.config
     else
-	echo "## DEFCONFIG     = $DEFCONFIG"
-	(set -x; make $verbose $quiet "$cc" $DEFCONFIG)
+        echo "## DEFCONFIG     = $DEFCONFIG"
+        (set -x; make $verbose $quiet "$cc" $DEFCONFIG)
     fi
 
     if [[ -n "$MERGE_CONFIG" ]]; then
@@ -110,7 +110,7 @@ if [[ "$1" == "kernel" ]]; then
     fi
 
     if [[ "$CCACHE" -eq 1 ]]; then
-	ccache -s
+        ccache -s
     fi
 
     if [[ -n "$POST_CLEAN" ]]; then
@@ -121,11 +121,11 @@ elif [[ "$1" == "docs" ]]; then
     rc=$?
 
     if [[ $rc -eq 0 ]]; then
-	grep -i "\bpowerpc\b.*warning" /output/docs.log
-	if [[ $? -eq 0 ]]; then
-	    echo "## Error, saw powerpc errors/warnings in docs build!"
-	    rc=1
-	fi
+        grep -i "\bpowerpc\b.*warning" /output/docs.log
+        if [[ $? -eq 0 ]]; then
+            echo "## Error, saw powerpc errors/warnings in docs build!"
+            rc=1
+        fi
     fi
 else
     # Workaround 303e6218ecec ("selftests: Fix O= and KBUILD_OUTPUT handling for relative paths")
