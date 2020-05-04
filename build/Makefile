@@ -23,12 +23,18 @@ define KERNEL_TEMPLATE =
 kernel@${1}@${2}: image@${1}@${2}
 	@./scripts/build.sh $$@
 
+clean-kernel@${1}@${2}:
+	@./scripts/clean.sh $$@
+
 KERNEL += kernel@${1}@${2}
 endef
 
 define SELFTESTS_TEMPLATE =
 ppctests@${1}@${2} selftests@${1}@${2}: image@${1}@${2}
 	@./scripts/build.sh $$@
+
+clean-selftests@${1}@${2}:
+	@./scripts/clean.sh $$@
 
 PPCTESTS += ppctests@${1}@${2}
 SELFTESTS += selftests@${1}@${2}

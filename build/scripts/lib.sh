@@ -21,7 +21,11 @@ function get_output_dir()
     local subarch="$2"
     local distro="$3"
     local version="$4"
-    local task="$5" # optional
+    local task="$5"
+    local defconfig="$6"
+    local targets="$7"
+    local clang="$8"
+    local d
 
     if [[ -z "$script_base" || -z "$subarch" || -z "$distro" || -z "$version" ]]; then
         echo "Error: not enough arguments to get_output_dir()" >&2
@@ -29,10 +33,36 @@ function get_output_dir()
     fi
 
     if [[ -n "$CI_OUTPUT" ]]; then
-        echo "$CI_OUTPUT/$subarch@$distro@$version/$task"
+        d="$CI_OUTPUT/$subarch@$distro@$version"
     else
-        echo "$script_base/../output/$subarch@$distro@$version/$task"
+        d="$script_base/../output/$subarch@$distro@$version"
     fi
+
+    case "$task" in
+        kernel) ;&
+        clean-kernel)
+            if [[ -n "$defconfig" ]]; then
+                defconfig="${defconfig//\//_}"
+                d="$d/$defconfig"
+            fi
+            ;;
+        ppctests) ;&
+        selftests) ;&
+        clean-selftests)
+            if [[ -n "$targets" ]]; then
+                targets=${targets// /_}
+                d="$d/selftests_$targets"
+            else
+                d="$d/selftests"
+            fi
+            ;;
+    esac
+
+    if [[ -n "$clang" ]]; then
+	d="${d}_clang"
+    fi
+
+    echo "$d"
 
     return 0
 }

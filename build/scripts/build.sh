@@ -19,9 +19,6 @@ IFS=@ read -r task subarch distro version <<< "$1"
 
 image="linuxppc/build:$distro-$version"
 
-output_dir=$(get_output_dir "$script_base" "$subarch" "$distro" "$version")
-mkdir -p "$output_dir"
-
 SRC="${SRC/#\~/$HOME}"
 SRC=$(realpath "$SRC")
 
@@ -43,18 +40,11 @@ cmd+="--network none "
 cmd+="-w /linux "
 cmd+="-v $SRC:/linux:ro "
 
-user=$(stat -c "%u:%g" $output_dir)
-cmd+="-u $user "
-
 cmd+="$alternate_binds "
 cmd+="-e ARCH=powerpc "
 
 if [[ -n $JFACTOR ]]; then
     cmd+="-e JFACTOR=$JFACTOR "
-fi
-
-if [[ -n $TARGETS ]]; then
-    cmd+="-e TARGETS=$TARGETS "
 fi
 
 if [[ -n $INSTALL ]]; then
@@ -101,17 +91,26 @@ if [[ "$task" == "kernel" ]]; then
 	cmd+="-e MERGE_CONFIG=$MERGE_CONFIG "
     fi
 
-    output_dir="$output_dir/$DEFCONFIG"
-
     if [[ -n "$CLANG" ]]; then
-       output_dir="${output_dir}_clang"
         cmd+="-e CLANG=1 "
     fi
-
-    mkdir -p "$output_dir"
 fi
 
+if [[ "$task" == "ppctests" ]]; then
+    TARGETS="powerpc"
+fi
+
+if [[ -n $TARGETS ]]; then
+    cmd+="-e TARGETS=$TARGETS "
+fi
+
+output_dir=$(get_output_dir "$script_base" "$subarch" "$distro" "$version" "$task" "$DEFCONFIG" "$TARGETS" "$CLANG")
+mkdir -p "$output_dir"
+
 cmd+="-v $output_dir:/output:rw "
+
+user=$(stat -c "%u:%g" $output_dir)
+cmd+="-u $user "
 
 if [[ -n "$CCACHE" ]]; then
     cmd+="-v $CCACHE:/ccache "
