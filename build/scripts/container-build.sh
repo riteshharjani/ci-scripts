@@ -54,6 +54,8 @@ if [[ "$1" == "kernel" ]]; then
         echo "## Using existing config $DEFCONFIG"
         cp -f "$DEFCONFIG" /output/.config || exit 1
     else
+        # Strip off any suffix after the first '+' used for unique naming
+        DEFCONFIG="${DEFCONFIG%%+*}"
         echo "## DEFCONFIG     = $DEFCONFIG"
         (set -x; make $verbose $quiet "$cc" $DEFCONFIG)
     fi
