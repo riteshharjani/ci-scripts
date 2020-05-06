@@ -30,11 +30,15 @@ RUN apt-get -q -y update && \
       make \
       openssl \
       u-boot-tools \
+      rename \
       rsync \
       sparse \
       xz-utils \
       $(/tmp/packages.sh) && \
     rm -rf /var/lib/apt/lists/* /tmp/packages.sh /var/cache/* /var/log/dpkg.log
+
+COPY ubuntu/make-links.sh /tmp/make-links.sh
+RUN /tmp/make-links.sh ${compiler_version} && rm /tmp/make-links.sh
 
 ARG uid
 ARG gid

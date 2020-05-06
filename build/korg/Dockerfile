@@ -45,11 +45,8 @@ RUN curl -sSL $base_url/$tar_file > $tar_file && \
     tar -xf $tar_file -C /opt && \
     rm $tar_file sha256sums.asc
 
-RUN cd /opt/gcc-${compiler_version}-nolibc/powerpc64-linux/bin && \
-    rename s/powerpc64-linux-/powerpc-linux-gnu-/ powerpc64-linux-*
-
-RUN cd /usr/bin && \
-    ln -s /opt/gcc-${compiler_version}-nolibc/powerpc64-linux/bin/* .
+COPY korg/make-links.sh /tmp/make-links.sh
+RUN /tmp/make-links.sh ${compiler_version} && rm /tmp/make-links.sh
 
 ARG uid
 ARG gid
@@ -60,3 +57,5 @@ USER linuxppc
 
 COPY scripts/container-build.sh /bin/container-build.sh
 COPY VERSION /VERSION
+
+ENV PATH=/opt/gcc-${compiler_version}-nolibc/powerpc64-linux/bin/:$PATH

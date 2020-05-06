@@ -28,7 +28,7 @@ SRC=$(realpath "$SRC")
 alternate_binds=$(get_alternate_binds)
 
 if [[ "$subarch" == "ppc64" ]]; then
-    cross="powerpc-linux-gnu-"
+    cross="powerpc64-linux-gnu-"
 else
     cross="powerpc64le-linux-gnu-"
 fi
