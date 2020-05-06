@@ -1,4 +1,5 @@
-FROM ubuntu:16.04
+ARG from
+FROM ${from}
 
 ARG apt_mirror
 ENV apt_mirror=${apt_mirror}

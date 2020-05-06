@@ -47,8 +47,10 @@ if [[ -z "$GID" ]]; then
     GID=$(id -g)
 fi
 
+from="$distro:$version"
+
 if [[ "$distro" == "docs" ]]; then
-    distro=ubuntu
+    from="ubuntu:$version"
 elif [[ "$distro" == "korg" ]]; then
     cmd+="--build-arg compiler_version=$version "
 
@@ -60,11 +62,18 @@ elif [[ "$distro" == "korg" ]]; then
     else
 	cmd+="--build-arg tar_file=${arch}-gcc-${version}-nolibc-powerpc64-linux.tar.xz "
     fi
+
+    # Use an older distro for the 4.x toolchains.
+    if [[ "$version" == 4.* ]]; then
+	from="ubuntu:16.04"
+    else
+	from="ubuntu:20.04"
+    fi
 fi
 
 cmd+="--build-arg uid=$UID "
 cmd+="--build-arg gid=$GID "
-cmd+="--build-arg from=$distro:$version "
+cmd+="--build-arg from=$from "
 cmd+="--build-arg apt_mirror=$APT_MIRROR "
 cmd+="-t $image-$(uname -m) "
 cmd+="-t $image ."
