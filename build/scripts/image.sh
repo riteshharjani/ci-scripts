@@ -63,8 +63,8 @@ elif [[ "$distro" == "korg" ]]; then
 	cmd+="--build-arg tar_file=${arch}-gcc-${version}-nolibc-powerpc64-linux.tar.xz "
     fi
 
-    # Use an older distro for the 4.x toolchains.
-    if [[ "$version" == 4.* ]]; then
+    # Use an older distro for the 4.x/5.x toolchains.
+    if [[ "$version" == 4.* || "$version" == 5.* ]]; then
 	from="ubuntu:16.04"
     else
 	from="ubuntu:20.04"
