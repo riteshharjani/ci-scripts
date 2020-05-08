@@ -50,7 +50,7 @@ if [[ "$1" == "kernel" ]]; then
         (set -x; make $verbose $quiet "$cc" clean)
     fi
 
-    if [[ "$DEFCONFIG" == .config* ]]; then
+    if [[ "$DEFCONFIG" == .config* || "$DEFCONFIG" == *.config ]]; then
         echo "## Using existing config $DEFCONFIG"
         cp "$DEFCONFIG" /output/.config
     else
