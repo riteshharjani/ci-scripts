@@ -53,7 +53,7 @@ BE_DISTROS += korg@4.6.3
 endif
 
 SELFTEST_DISTROS := ubuntu@20.04 ubuntu@19.10 ubuntu@18.04 ubuntu@16.04
-KERNEL_DISTROS := korg@10.1.0 korg@9.3.0 korg@8.1.0 korg@5.5.0 fedora@31
+KERNEL_DISTROS := korg@10.1.0 korg@9.3.0 korg@8.1.0 korg@5.5.0 fedora@32 fedora@31
 DOCS_DISTRO := docs@20.04
 ALL_DISTROS := ${SELFTEST_DISTROS} ${BE_DISTROS} ${KERNEL_DISTROS}
 SUBARCHES := ppc64le ppc64
