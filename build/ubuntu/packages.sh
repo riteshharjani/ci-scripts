@@ -25,16 +25,16 @@ elif [[ "$VERSION_ID" == "20.04" ]]; then
     PACKAGES+=" gcc-9-multilib-powerpc-linux-gnu"
 fi
 
+major="${VERSION_ID%%.*}"
+if [[ $major -ge 18 ]]; then
+    PACKAGES+=" clang llvm"
+fi
+
 if [[ "$machine" == "ppc64le" ]]; then
     PACKAGES+=" libcap-dev"
     PACKAGES+=" libcap-ng-dev"
     PACKAGES+=" libnuma-dev"
     PACKAGES+=" libpopt-dev"
-
-    major="${VERSION_ID%%.*}"
-    if [[ $major -ge 18 ]]; then
-        PACKAGES+=" clang llvm"
-    fi
 else
     PACKAGES+=" gcc-powerpc64le-linux-gnu g++-powerpc64le-linux-gnu"
 fi
