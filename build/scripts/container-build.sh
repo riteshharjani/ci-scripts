@@ -119,7 +119,7 @@ if [[ "$1" == "kernel" ]]; then
         (set -x; make $verbose $quiet "$cc" clean)
     fi
 elif [[ "$1" == "docs" ]]; then
-    (set -x; make $verbose $quiet -j $JFACTOR htmldocs 2>&1 | tee /output/docs.log)
+    (set -x -o pipefail; make $verbose $quiet -j $JFACTOR htmldocs 2>&1 | tee /output/docs.log)
     rc=$?
 
     if [[ $rc -eq 0 ]]; then
