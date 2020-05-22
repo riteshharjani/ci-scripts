@@ -23,6 +23,11 @@ elif [[ "$task" == "pull-image" ]]; then
     (set -x; $cmd)
     exit $?
 elif [[ "$task" == "push-image" ]]; then
+    if [[ -n "$DOCKER_PASSWORD" && -n "$DOCKER_USER" ]]; then
+	cmd="$DOCKER login -u $DOCKER_USER -p $DOCKER_PASSWORD"
+	(set -x; $cmd)
+    fi
+
     image="$image-$(uname -m)"
     cmd="$DOCKER push $image"
     (set -x; $cmd)
