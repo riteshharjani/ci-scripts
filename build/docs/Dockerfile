@@ -21,6 +21,7 @@ RUN apt-get -q -y update && \
       librsvg2-bin \
       make \
       perl-modules \
+      python-is-python3 \
       python3-sphinx \
       python3-sphinx-rtd-theme \
       texlive-xetex \
