@@ -90,6 +90,7 @@ Other options
 
 As mentioned above you pass the make -j factor with `JFACTOR=n`.
 
+:bangbang: :warning: Sparse is currently broken with mainline Linux.
 To run sparse pass `SPARSE=1`.
 The log will be in eg. `output/ppc64le@ubuntu@20.04/ppc64le_defconfig/sparse.log`.
 
