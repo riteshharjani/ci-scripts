@@ -43,6 +43,7 @@ if [[ -t 0 ]]; then
     cmd+="-it "
 fi
 
+cmd+="-h $(hostname) "
 cmd+="--network none "
 cmd+="-w /linux "
 cmd+="-v $SRC:/linux:ro "
