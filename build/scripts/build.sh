@@ -24,10 +24,13 @@ SRC=$(realpath "$SRC")
 
 alternate_binds=$(get_alternate_binds)
 
-if [[ "$subarch" == "ppc64" ]]; then
-    cross="powerpc64-linux-gnu-"
+if [[ "$subarch" == "ppc64le" ]]; then
+    # No cross compiler for fedora ppc64le on ppc64le
+    if [[ "$distro" != "fedora" || $(uname -m) != "ppc64le" ]]; then
+	cross="powerpc64le-linux-gnu-"
+    fi
 else
-    cross="powerpc64le-linux-gnu-"
+    cross="powerpc64-linux-gnu-"
 fi
 
 cmd="$DOCKER run --rm "
@@ -79,7 +82,9 @@ if [[ -n $MODULES ]]; then
     cmd+="-e MODULES=$MODULES "
 fi
 
-cmd+="-e CROSS_COMPILE=$cross "
+if [[ -n $cross ]]; then
+    cmd+="-e CROSS_COMPILE=$cross "
+fi
 
 if [[ -n "$KBUILD_BUILD_TIMESTAMP" ]]; then
     cmd+="-e KBUILD_BUILD_TIMESTAMP=$KBUILD_BUILD_TIMESTAMP "
