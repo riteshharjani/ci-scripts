@@ -118,7 +118,7 @@ if [[ -n $TARGETS ]]; then
 fi
 
 output_dir=$(get_output_dir "$script_base" "$subarch" "$distro" "$version" "$task" "$DEFCONFIG" "$TARGETS" "$CLANG")
-mkdir -p "$output_dir"
+mkdir -p "$output_dir" || exit 1
 
 cmd+="-v $output_dir:/output:rw "
 
