@@ -122,6 +122,10 @@ if [[ -n "$CCACHE" ]]; then
     cmd+="-e CCACHE=1 "
 fi
 
+if [[ -r /etc/timezone ]]; then
+    cmd+="-e TZ=$(< /etc/timezone) "
+fi
+
 if [[ -n "$DOCKER_EXTRA_ARGS" ]]; then
     # Can be used for eg. a rootdisk.
     # DOCKER_EXTRA_ARGS="-v /path/to/rootdisk:/path/to/rootdisk:ro"
