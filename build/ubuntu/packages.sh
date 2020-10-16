@@ -43,4 +43,8 @@ else
     PACKAGES+=" gcc-powerpc64le-linux-gnu g++-powerpc64le-linux-gnu"
 fi
 
+if [[ "$machine" != "x86_64" ]]; then
+    PACKAGES+=" crossbuild-essential-amd64"
+fi
+
 echo $PACKAGES

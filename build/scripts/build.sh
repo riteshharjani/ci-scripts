@@ -24,11 +24,15 @@ SRC=$(realpath "$SRC")
 
 alternate_binds=$(get_alternate_binds)
 
+arch=powerpc
 if [[ "$subarch" == "ppc64le" ]]; then
     # No cross compiler for fedora ppc64le on ppc64le
     if [[ "$distro" != "fedora" || $(uname -m) != "ppc64le" ]]; then
 	cross="powerpc64le-linux-gnu-"
     fi
+elif [[ "$subarch" == "x86_64" ]]; then
+    cross="x86_64-linux-gnu-"
+    arch=x86
 else
     cross="powerpc64-linux-gnu-"
 fi
@@ -44,7 +48,7 @@ cmd+="-w /linux "
 cmd+="-v $SRC:/linux:ro "
 
 cmd+="$alternate_binds "
-cmd+="-e ARCH=powerpc "
+cmd+="-e ARCH=$arch "
 
 if [[ -n $JFACTOR ]]; then
     cmd+="-e JFACTOR=$JFACTOR "
