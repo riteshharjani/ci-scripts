@@ -23,6 +23,10 @@ elif [[ "$VERSION_ID" == "19.10" ]]; then
     PACKAGES+=" gcc-9-multilib-powerpc-linux-gnu"
 elif [[ "$VERSION_ID" == "20.04" ]]; then
     PACKAGES+=" gcc-9-multilib-powerpc-linux-gnu"
+elif [[ "$VERSION_ID" == "20.10" ]]; then
+    PACKAGES+=" gcc-10-multilib-powerpc-linux-gnu"
+else
+    PACKAGES+=" crossbuild-essential-powerpc"
 fi
 
 major="${VERSION_ID%%.*}"
