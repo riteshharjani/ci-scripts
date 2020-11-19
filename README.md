@@ -55,6 +55,7 @@ There are images for various toolchains, they are encoded in the distro name/ver
  - kernel.org gcc 8.1.0 `korg@8.1.0`
  - kernel.org gcc 5.5.0 `korg@5.5.0`
  - kernel.org gcc 4.9.4 (BE only) `korg@4.9.4`
+ - Ubuntu 20.10 `ubuntu@20.10`
  - Ubuntu 20.04 `ubuntu@20.04`
  - Ubuntu 18.04 `ubuntu@18.04`
  - Ubuntu 16.04 `ubuntu@16.04`
