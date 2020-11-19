@@ -66,6 +66,10 @@ $(eval $(call DOCS_TEMPLATE,ppc64le,${DOCS_DISTRO}))
 $(eval $(call MAIN_TEMPLATE,x86_64,${X86_DISTRO}))
 $(eval $(call KERNEL_TEMPLATE,x86_64,${X86_DISTRO}))
 
+ifeq ($(shell uname -m),x86_64)
+$(eval $(call SELFTESTS_TEMPLATE,x86_64,${X86_DISTRO}))
+endif
+
 $(foreach distro,${BE_DISTROS}, \
 	$(eval $(call MAIN_TEMPLATE,ppc64,${distro})) \
 	$(eval $(call KERNEL_TEMPLATE,ppc64,${distro})) \
