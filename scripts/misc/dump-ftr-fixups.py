@@ -96,7 +96,7 @@ def decode_ftr(features, value):
         remainder &= ~mask
 
     if remainder:
-        s.append(remainder)
+        s.append("UNKNOWN={:x}".format(remainder))
 
     return ', '.join(s)
 
