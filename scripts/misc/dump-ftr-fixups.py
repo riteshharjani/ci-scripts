@@ -199,6 +199,10 @@ def run_objdump(path, endian):
 
 
 def objdump_range(bin_file, path, endian, start, end):
+    if start == end:
+        print("Warning: empty range {:x}".format(start))
+        return []
+
     offset = find_section_by_addr(path, start, end)
 
     bin_file.seek(offset)
