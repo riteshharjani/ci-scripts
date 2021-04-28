@@ -55,6 +55,7 @@ There are images for various toolchains, they are encoded in the distro name/ver
  - kernel.org gcc 8.1.0 `korg@8.1.0`
  - kernel.org gcc 5.5.0 `korg@5.5.0`
  - kernel.org gcc 4.9.4 (BE only) `korg@4.9.4`
+ - Ubuntu 21.04 `ubuntu@21.04`
  - Ubuntu 20.10 `ubuntu@20.10`
  - Ubuntu 20.04 `ubuntu@20.04`
  - Ubuntu 18.04 `ubuntu@18.04`
@@ -100,7 +101,7 @@ The log will be in eg. `output/ppc64le@ubuntu@20.04/ppc64le_defconfig/sparse.log
 
 To build modules pass `MODULES=1`
 
-To build with clang pass `CLANG=1`, only works using the Ubuntu `devel` images.
+To build with clang pass `CLANG=1`, only works using the Ubuntu `21.04` images.
 
 For a quiet build pass `QUIET=1`, for verbose pass `VERBOSE=1`.
 
