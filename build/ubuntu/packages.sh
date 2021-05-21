@@ -21,14 +21,14 @@ elif [[ "$VERSION_ID" == "19.04" ]]; then
     PACKAGES+=" gcc-8-multilib-powerpc-linux-gnu"
 elif [[ "$VERSION_ID" == "20.04" ]]; then
     PACKAGES+=" gcc-9-multilib-powerpc-linux-gnu"
-
-    if [[ "$machine" != "x86_64" ]]; then
-        PACKAGES+=" crossbuild-essential-amd64"
-    fi
 elif [[ "$VERSION_ID" == "20.10" ]]; then
     PACKAGES+=" gcc-10-multilib-powerpc-linux-gnu"
 elif [[ "$VERSION_ID" == "21.04" ]]; then
     PACKAGES+=" gcc-10-multilib-powerpc-linux-gnu"
+
+    if [[ "$machine" != "x86_64" ]]; then
+        PACKAGES+=" crossbuild-essential-amd64"
+    fi
 else
     PACKAGES+=" crossbuild-essential-powerpc"
 fi
