@@ -51,13 +51,13 @@ def main():
         return False
 
     if os.environ.get('COMPAT_USERSPACE', False):
-        rootfs = 'ppc-rootfs.cpio.gz'
+        initrd = 'ppc-rootfs.cpio.gz'
     else:
-        rootfs = 'ppc64-novsx-rootfs.cpio.gz'
+        initrd = 'ppc64-novsx-rootfs.cpio.gz'
 
     p = PexpectHelper()
     cmd = qemu_command(vmlinux=vmlinux, machine='ppce500', cpu='e5500',
-                       mem='4G', rootfs=rootfs, cmdline='noreboot')
+                       mem='4G', initrd=initrd, cmdline='noreboot')
     p.spawn(cmd, logfile=open('console.log', 'w'))
 
     standard_boot(p)
