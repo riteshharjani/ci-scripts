@@ -83,8 +83,8 @@ class PexpectHelper:
         self.prompt_stack.pop()
         self.prompt = self.prompt_stack[-1]
 
-    def expect_prompt(self):
-        self.expect(self.prompt)
+    def expect_prompt(self, timeout=-1):
+        self.expect(self.prompt, timeout=timeout)
 
     def send_no_newline(self, data):
         self.child.send(data)
@@ -98,20 +98,20 @@ class PexpectHelper:
         self.expect_prompt()
 
 
-def standard_boot(p, login=False, user='root'):
+def standard_boot(p, login=False, user='root', timeout=-1):
     p.push_prompt(p.DEFAULT_PROMPT)
 
     logging.info("Waiting for kernel to boot")
-    p.expect("Freeing unused kernel ")
+    p.expect("Freeing unused kernel ", timeout=timeout)
 
     if login:
         logging.info("Kernel came up, waiting for login ...")
-        p.expect("login:")
+        p.expect("login:", timeout=timeout)
         p.send(user)
     else:
         logging.info("Kernel came up, waiting for prompt ...")
 
-    p.expect_prompt()
+    p.expect_prompt(timeout=timeout)
     logging.info("Booted to shell prompt")
 
 
