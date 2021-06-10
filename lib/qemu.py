@@ -31,7 +31,7 @@ def get_qemu_version(emulator):
 
 
 def qemu_command(qemu='qemu-system-ppc64', machine='pseries,cap-htm=off', cpu=None,
-                 mem='1G', smp=1, vmlinux=None, initrd=None,
+                 mem='1G', smp=1, vmlinux=None, initrd=None, drive=None,
                  cmdline='', accel='tcg', net='-nic user'):
 
     qemu_path = get_qemu(qemu)
@@ -39,16 +39,6 @@ def qemu_command(qemu='qemu-system-ppc64', machine='pseries,cap-htm=off', cpu=No
 
     if vmlinux is None:
         vmlinux = get_vmlinux()
-
-    if initrd is None:
-        if qemu == 'qemu-system-ppc':
-            subarch = 'ppc'
-        elif get_endian(vmlinux) == 'little':
-            subarch = 'ppc64le'
-        else:
-            subarch = 'ppc64'
-
-        initrd = f'{subarch}-rootfs.cpio.gz'
 
     l = [
         get_qemu(qemu),
@@ -62,9 +52,22 @@ def qemu_command(qemu='qemu-system-ppc64', machine='pseries,cap-htm=off', cpu=No
         net,
     ]
 
+    if initrd is None and drive is None:
+        if qemu == 'qemu-system-ppc':
+            subarch = 'ppc'
+        elif get_endian(vmlinux) == 'little':
+            subarch = 'ppc64le'
+        else:
+            subarch = 'ppc64'
+
+        initrd = f'{subarch}-rootfs.cpio.gz'
+
     if initrd:
         l.append('-initrd')
         l.append(get_root_disk(initrd))
+
+    if drive:
+        l.append(drive)
 
     if cpu is not None:
         l.append('-cpu')
