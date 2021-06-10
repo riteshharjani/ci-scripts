@@ -21,7 +21,8 @@
 # export SMP=n                  # Default 2 for tcg or 8 for kvm
 
 import logging
-import os, sys
+import os, sys, atexit
+from subprocess import check_call
 sys.path.append(f'{os.path.dirname(sys.argv[0])}/../../lib')
 
 from qemu import qemu_command, qemu_net_setup
@@ -31,7 +32,6 @@ from utils import *
 
 def main():
     setup_logging()
-    setup_timeout(60)
 
     if not check_env_vars(['ROOT_DISK_PATH']):
         return False
@@ -54,13 +54,45 @@ def main():
         else:
             smp = 8
 
+    cmdline = 'noreboot'
+
+    cloud_image = os.environ.get('CLOUD_IMAGE', False)
+    if cloud_image:
+        setup_timeout(600)
+
+        # Create snapshot image
+        rdpath = get_env_var('ROOT_DISK_PATH')
+        src = f'{rdpath}/{cloud_image}'
+        pid = os.getpid()
+        dst = f'{rdpath}/qemu-temp-{pid}.img'
+        cmd = f'qemu-img create -f qcow2 -F qcow2 -b {src} {dst}'.split()
+        check_call(cmd)
+
+        atexit.register(lambda: os.unlink(dst))
+
+        if 'ubuntu' in cloud_image:
+            cmdline += ' root=/dev/vda1'
+            prompt = 'root@ubuntu:~#'
+        else:
+            cmdline += ' root=/dev/vda2'
+            prompt = '\[root@fedora ~\]#'
+
+        drive = f'-drive file={dst},format=qcow2,if=virtio ' \
+                f'-drive file={rdpath}/cloud-init-user-data.img,if=virtio,format=raw,readonly=on'
+    else:
+        setup_timeout(120)
+        drive = None
+
     p = PexpectHelper()
-    cmd = qemu_command(vmlinux=vmlinux, cpu=cpu, mem='4G',
+    cmd = qemu_command(vmlinux=vmlinux, cpu=cpu, mem='4G', drive=drive,
                        net='-nic user,model=virtio-net-pci',
-                       accel=accel, smp=smp, cmdline='noreboot')
+                       accel=accel, smp=smp, cmdline=cmdline)
     p.spawn(cmd, logfile=open('console.log', 'w'))
 
-    standard_boot(p)
+    if cloud_image:
+        standard_boot(p, prompt=prompt, login=True, password='linuxppc', timeout=300)
+    else:
+        standard_boot(p)
 
     p.send("echo -n 'booted-revision: '; uname -r")
     p.expect(f'booted-revision: {expected_release}')
@@ -75,7 +107,7 @@ def main():
         ping_test(p)
         wget_test(p)
 
-    p.cmd('halt')
+    p.send('halt')
     p.wait_for_exit()
 
     if filter_log_warnings(open('console.log'), open('warnings.txt', 'w')):
