@@ -98,8 +98,11 @@ class PexpectHelper:
         self.expect_prompt()
 
 
-def standard_boot(p, login=False, user='root', timeout=-1):
-    p.push_prompt(p.DEFAULT_PROMPT)
+def standard_boot(p, login=False, user='root', timeout=-1, prompt=None):
+    if prompt is None:
+        prompt = p.DEFAULT_PROMPT
+
+    p.push_prompt(prompt)
 
     logging.info("Waiting for kernel to boot")
     p.expect("Freeing unused kernel ", timeout=timeout)
