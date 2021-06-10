@@ -44,10 +44,10 @@ def main():
     if vmlinux is None:
         return False
 
-    cpu = os.environ.get('CPU', 'POWER8')
-    accel = os.environ.get('ACCEL', 'tcg')
+    cpu = get_env_var('CPU', 'POWER8')
+    accel = get_env_var('ACCEL', 'tcg')
 
-    smp = os.environ.get('SMP', None)
+    smp = get_env_var('SMP', None)
     if smp is None:
         if accel == 'tcg':
             smp = 2
