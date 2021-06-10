@@ -98,7 +98,7 @@ class PexpectHelper:
         self.expect_prompt()
 
 
-def standard_boot(p, login=False, user='root', timeout=-1, prompt=None):
+def standard_boot(p, login=False, user='root', password=None, timeout=-1, prompt=None):
     if prompt is None:
         prompt = p.DEFAULT_PROMPT
 
@@ -111,6 +111,9 @@ def standard_boot(p, login=False, user='root', timeout=-1, prompt=None):
         logging.info("Kernel came up, waiting for login ...")
         p.expect("login:", timeout=timeout)
         p.send(user)
+        if password is not None:
+            p.expect("Password:", timeout=timeout)
+            p.send(password)
     else:
         logging.info("Kernel came up, waiting for prompt ...")
 
