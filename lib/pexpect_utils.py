@@ -122,7 +122,7 @@ def standard_boot(p, login=False, user='root', password=None, timeout=-1, prompt
 
 
 def ping_test(p, ip='10.0.2.2', check=True):
-    p.send(f'ping -c 3 {ip}')
+    p.send(f'ping -W 10 -c 3 {ip}')
     if check:
         p.expect('3 packets transmitted, 3 packets received')
     p.expect_prompt()
