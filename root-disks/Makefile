@@ -1,4 +1,5 @@
 IMAGES += ppc64-rootfs.cpio.gz ppc64-novsx-rootfs.cpio.gz ppc64le-rootfs.cpio.gz ppc-rootfs.cpio.gz
+IMAGES += cloud-init-user-data.img
 
 all: $(IMAGES)
 
@@ -13,6 +14,9 @@ ppc64le-rootfs.cpio.gz:
 
 ppc-rootfs.cpio.gz:
 	wget -O $@ "https://github.com/groeck/linux-build-test/blob/65335f1a683166c7b83d61a3eeaf400ebcfa20dd/rootfs/ppc/rootfs.cpio.gz?raw=true"
+
+cloud-init-user-data.img: cloud-init-user-data.txt
+	cloud-localds $@ $<
 
 clean:
 	@echo "Use distclean to remove rootfs images"
