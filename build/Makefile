@@ -40,6 +40,16 @@ PPCTESTS += ppctests@${1}@${2}
 SELFTESTS += selftests@${1}@${2}
 endef
 
+define PERF_TEMPLATE =
+perf@${1}@${2}: image@${1}@${2}
+	@./scripts/build.sh $$@
+
+clean-perf@${1}@${2}:
+	@./scripts/clean.sh $$@
+
+PERF += perf@${1}@${2}
+endef
+
 define DOCS_TEMPLATE =
 docs@${1}@${2}: image@${1}@${2}
 	@./scripts/build.sh $$@
@@ -78,6 +88,9 @@ $(foreach distro,${UBUNTU_DISTROS}, \
 	$(foreach subarch,${SUBARCHES}, \
 		$(eval $(call SELFTESTS_TEMPLATE,${subarch},${distro})) \
 	) \
+	$(foreach subarch,${SUBARCHES}, \
+		$(eval $(call PERF_TEMPLATE,${subarch},${distro})) \
+	) \
 )
 
 ifeq ($(shell uname -m),ppc64le)
@@ -92,6 +105,7 @@ clean: ${CLEAN}
 kernel: ${KERNEL}
 ppctests: ${PPCTESTS}
 selftests: ${SELFTESTS}
+perf: ${PERF}
 images: ${IMAGES}
 pull-images: ${PULL_IMAGES}
 rebuild-images: ${REBUILD_IMAGES}

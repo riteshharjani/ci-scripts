@@ -57,6 +57,10 @@ function get_output_dir()
                 d="$d/selftests"
             fi
             ;;
+        perf) ;&
+        clean-perf)
+            d="$d/perf"
+            ;;
     esac
 
     if [[ -n "$clang" ]]; then
