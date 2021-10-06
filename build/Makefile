@@ -48,11 +48,11 @@ DOCS += docs@${1}@${2}
 endef
 
 FEDORA_DISTROS := fedora@34 fedora@33 fedora@32 fedora@31
-SELFTEST_DISTROS := ubuntu@21.04 ubuntu@20.10 ubuntu@20.04 ubuntu@18.04 ubuntu@16.04
-KERNEL_DISTROS := korg@11.1.0 korg@10.3.0 korg@9.3.0 korg@8.1.0 korg@5.5.0 ${FEDORA_DISTROS}
+UBUNTU_DISTROS := ubuntu@21.04 ubuntu@20.10 ubuntu@20.04 ubuntu@18.04 ubuntu@16.04
+KORG_DISTROS := korg@11.1.0 korg@10.3.0 korg@9.3.0 korg@8.1.0 korg@5.5.0
+ALL_DISTROS := ${UBUNTU_DISTROS} ${KORG_DISTROS} ${FEDORA_DISTROS}
 DOCS_DISTRO := docs@21.04
 X86_DISTRO := ubuntu@21.04
-ALL_DISTROS := ${SELFTEST_DISTROS} ${KERNEL_DISTROS}
 SUBARCHES := ppc64le ppc64
 
 $(eval $(call MAIN_TEMPLATE,ppc64le,${DOCS_DISTRO}))
@@ -65,7 +65,7 @@ ifeq ($(shell uname -m),x86_64)
 $(eval $(call SELFTESTS_TEMPLATE,x86_64,${X86_DISTRO}))
 endif
 
-$(foreach distro,${KERNEL_DISTROS}, \
+$(foreach distro,${ALL_DISTROS}, \
 	$(foreach subarch,${SUBARCHES}, \
 		$(eval $(call MAIN_TEMPLATE,${subarch},${distro})) \
 	) \
@@ -74,13 +74,7 @@ $(foreach distro,${KERNEL_DISTROS}, \
 	) \
 )
 
-$(foreach distro,${SELFTEST_DISTROS}, \
-	$(foreach subarch,${SUBARCHES}, \
-		$(eval $(call MAIN_TEMPLATE,${subarch},${distro})) \
-	) \
-	$(foreach subarch,${SUBARCHES}, \
-		$(eval $(call KERNEL_TEMPLATE,${subarch},${distro})) \
-	) \
+$(foreach distro,${UBUNTU_DISTROS}, \
 	$(foreach subarch,${SUBARCHES}, \
 		$(eval $(call SELFTESTS_TEMPLATE,${subarch},${distro})) \
 	) \
