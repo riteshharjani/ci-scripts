@@ -2,6 +2,7 @@ IMAGES += ppc64-rootfs.cpio.gz ppc64-novsx-rootfs.cpio.gz ppc64le-rootfs.cpio.gz
 IMAGES += ppc-rootfs.cpio.gz
 IMAGES += cloud-init-user-data.img
 IMAGES += ubuntu21.04-cloudimg-ppc64el.qcow2
+IMAGES += fedora34-cloudimg-ppc64le.qcow2
 
 all: $(IMAGES)
 
@@ -19,6 +20,12 @@ ppc-rootfs.cpio.gz:
 
 ubuntu21.04-cloudimg-ppc64el.qcow2:
 	wget -O $@.tmp "https://cloud-images.ubuntu.com/hirsute/current/hirsute-server-cloudimg-ppc64el.img"
+	mv $@.tmp $@
+	chmod a-w $@
+	sha256sum $@ > $@.sum
+
+fedora34-cloudimg-ppc64le.qcow2:
+	wget -O $@.tmp "https://download.fedoraproject.org/pub/fedora-secondary/releases/34/Cloud/ppc64le/images/Fedora-Cloud-Base-34-1.2.ppc64le.qcow2"
 	mv $@.tmp $@
 	chmod a-w $@
 	sha256sum $@ > $@.sum

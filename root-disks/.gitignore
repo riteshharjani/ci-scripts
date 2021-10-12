@@ -2,3 +2,5 @@
 cloud-init-user-data.img
 ubuntu21.04-cloudimg-ppc64el.qcow2
 ubuntu21.04-cloudimg-ppc64el.qcow2.sum
+fedora34-cloudimg-ppc64le.qcow2
+fedora34-cloudimg-ppc64le.qcow2.sum
