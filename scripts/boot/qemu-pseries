@@ -70,9 +70,10 @@ def main():
     p.expect("IBM pSeries \(emulated by qemu\)")
     p.expect_prompt()
 
-    qemu_net_setup(p)
-    ping_test(p)
-    wget_test(p)
+    if os.environ.get('QEMU_NET_TESTS', True) != '0':
+        qemu_net_setup(p)
+        ping_test(p)
+        wget_test(p)
 
     p.cmd('halt')
     p.wait_for_exit()
