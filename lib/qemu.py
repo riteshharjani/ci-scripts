@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 from utils import get_env_var, get_endian
 from pexpect_utils import PexpectHelper
@@ -14,10 +15,22 @@ def get_qemu(name='qemu-system-ppc64'):
     return qemu
 
 
-def get_root_disk(fname):
-    path = get_env_var('ROOT_DISK_PATH', '')
-    val = os.path.join(path, fname)
+def get_root_disk_path():
+    path = get_env_var('ROOT_DISK_PATH', None)
+    if path is not None:
+        return path
 
+    base = os.path.dirname(sys.argv[0])
+    # Assumes we're called from scripts/boot/qemu-xxx
+    path = f'{base}/../../root-disks'
+    if os.path.isdir(path):
+        return path
+
+    return ''
+
+
+def get_root_disk(fname):
+    val = os.path.join(get_root_disk_path(), fname)
     logging.debug(f'Using rootfs {val}')
     return val
 
