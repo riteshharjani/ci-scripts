@@ -2,6 +2,7 @@ help:
 	@echo "Golang build test"
 	@echo "Available targets:"
 	@echo "  download 	# download required sources"
+	@echo "  prepare 	# download and install dependencies"
 	@echo "  test 		# run the test"
 
 version = 1.16.6
@@ -13,6 +14,9 @@ ${tarball}:
 	wget -O $@.tmp https://github.com/golang/go/archive/refs/tags/${tarball}
 	mv $@.tmp $@
 
+prepare: download
+	@./install-deps.sh
+
 test: download
 	@./test.sh
 
@@ -22,4 +26,4 @@ clean:
 distclean: clean
 	rm -f ${tarball}
 
-.PHONY: download test clean distclean help
+.PHONY: download prepare test clean distclean help
