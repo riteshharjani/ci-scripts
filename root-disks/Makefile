@@ -9,48 +9,53 @@ IMAGES += fedora34-cloudimg-ppc64le.qcow2
 
 all: $(IMAGES)
 
+define wget
+	wget -O $(1).tmp $(2)
+	mv $(1).tmp $(1)
+endef
+
+define wget_lbt
+	$(call wget,$(1),"https://github.com/groeck/linux-build-test/blob/236ccac32e5c3538f2c8221b359225cc40925ba0/rootfs/$(2)?raw=true")
+endef
+
 ppc64-rootfs.cpio.gz: ppc64-novsx-rootfs.cpio.gz
-	ln -s $< $@
+	ln -fs $< $@
 
 ppc64-novsx-rootfs.cpio.gz:
-	wget -O $@.tmp "https://github.com/groeck/linux-build-test/blob/236ccac32e5c3538f2c8221b359225cc40925ba0/rootfs/ppc64/rootfs.cpio.gz?raw=true"
-	mv $@.tmp $@
+	$(call wget_lbt,$@,ppc64/rootfs.cpio.gz)
 
 ppc64le-rootfs.cpio.gz:
-	wget -O $@.tmp "https://github.com/groeck/linux-build-test/blob/236ccac32e5c3538f2c8221b359225cc40925ba0/rootfs/ppc64/rootfs-el.cpio.gz?raw=true"
-	mv $@.tmp $@
+	$(call wget_lbt,$@,ppc64/rootfs-el.cpio.gz)
 
 ppc-rootfs.cpio.gz:
-	wget -O $@.tmp "https://github.com/groeck/linux-build-test/blob/236ccac32e5c3538f2c8221b359225cc40925ba0/rootfs/ppc/rootfs.cpio.gz?raw=true"
-	mv $@.tmp $@
+	$(call wget_lbt,$@,ppc/rootfs.cpio.gz)
+
+define wget_ubuntu
+	$(call wget,$(1),"https://cloud-images.ubuntu.com/$(2)/current/$(3)")
+endef
 
 ubuntu16.04-cloudimg-powerpc.qcow2:
-	wget -O $@.tmp "https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-powerpc-disk1.img"
-	mv $@.tmp $@
+	$(call wget_ubuntu,$@,xenial,xenial-server-cloudimg-powerpc-disk1.img)
 	chmod a-w $@
 	sha256sum $@ > $@.sum
 
 ubuntu16.04-cloudimg-ppc64el.qcow2:
-	wget -O $@.tmp "https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-ppc64el-disk1.img"
-	mv $@.tmp $@
+	$(call wget_ubuntu,$@,xenial,xenial-server-cloudimg-ppc64el-disk1.img)
 	chmod a-w $@
 	sha256sum $@ > $@.sum
 
 ubuntu21.04-cloudimg-ppc64el.qcow2:
-	wget -O $@.tmp "https://cloud-images.ubuntu.com/hirsute/current/hirsute-server-cloudimg-ppc64el.img"
-	mv $@.tmp $@
+	$(call wget_ubuntu,$@,hirsute,hirsute-server-cloudimg-ppc64el.img)
 	chmod a-w $@
 	sha256sum $@ > $@.sum
 
 ubuntu21.10-cloudimg-ppc64el.qcow2:
-	wget -O $@.tmp "https://cloud-images.ubuntu.com/impish/current/impish-server-cloudimg-ppc64el.img"
-	mv $@.tmp $@
+	$(call wget_ubuntu,$@,impish,impish-server-cloudimg-ppc64el.img)
 	chmod a-w $@
 	sha256sum $@ > $@.sum
 
 fedora34-cloudimg-ppc64le.qcow2:
-	wget -O $@.tmp "https://download.fedoraproject.org/pub/fedora-secondary/releases/34/Cloud/ppc64le/images/Fedora-Cloud-Base-34-1.2.ppc64le.qcow2"
-	mv $@.tmp $@
+	$(call wget,$@,"https://download.fedoraproject.org/pub/fedora-secondary/releases/34/Cloud/ppc64le/images/Fedora-Cloud-Base-34-1.2.ppc64le.qcow2")
 	chmod a-w $@
 	sha256sum $@ > $@.sum
 
