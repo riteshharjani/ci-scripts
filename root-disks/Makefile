@@ -66,4 +66,4 @@ clean:
 	@echo "Use distclean to remove rootfs images"
 
 distclean:
-	rm -f $(IMAGES)
+	rm -f $(IMAGES) *.sum
