@@ -45,7 +45,7 @@ def get_qemu_version(emulator):
 
 def qemu_command(qemu='qemu-system-ppc64', machine='pseries,cap-htm=off', cpu=None,
                  mem='1G', smp=1, vmlinux=None, initrd=None, drive=None,
-                 cmdline='', accel='tcg', net='-nic user'):
+                 host_mount=None, cmdline='', accel='tcg', net='-nic user'):
 
     qemu_path = get_qemu(qemu)
     logging.info('Using qemu version %s.%s' % get_qemu_version(qemu_path))
@@ -81,6 +81,9 @@ def qemu_command(qemu='qemu-system-ppc64', machine='pseries,cap-htm=off', cpu=No
 
     if drive:
         l.append(drive)
+
+    if host_mount:
+        l.append(f'-virtfs local,path={host_mount},mount_tag=host,security_model=none')
 
     if cpu is not None:
         l.append('-cpu')

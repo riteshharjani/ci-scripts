@@ -79,9 +79,14 @@ def main():
         setup_timeout(120)
         drive = None
 
+    host_mount = os.environ.get('QEMU_HOST_MOUNT', '')
+    if host_mount and not os.path.isdir(host_mount):
+        logging.error('QEMU_HOST_MOUNT must point to a directory')
+        return False
+
     p = PexpectHelper()
     cmd = qemu_command(vmlinux=vmlinux, cpu=cpu, mem='4G', drive=drive,
-                       net='-nic user,model=virtio-net-pci',
+                       net='-nic user,model=virtio-net-pci', host_mount=host_mount,
                        accel=accel, smp=smp, cmdline=cmdline)
     p.spawn(cmd, logfile=open('console.log', 'w'))
 
@@ -102,6 +107,15 @@ def main():
         qemu_net_setup(p)
         ping_test(p)
         wget_test(p)
+
+    if host_mount:
+        # Clear timeout, we don't know how long it will take
+        setup_timeout(0)
+        p.cmd('mkdir -p /mnt')
+        p.cmd('mount -t 9p -o version=9p2000.L,trans=virtio host /mnt')
+        host_command = os.environ.get('QEMU_HOST_COMMAND', 'run')
+        p.send(f'[ -x /mnt/{host_command} ] && (cd /mnt && ./{host_command})')
+        p.expect_prompt(timeout=None) # no timeout
 
     p.send('halt')
     p.wait_for_exit()
