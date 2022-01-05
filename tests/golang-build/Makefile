@@ -6,12 +6,12 @@ help:
 	@echo "  test 		# run the test"
 
 version = 1.16.6
-tarball = go${version}.tar.gz
+tarball = go$(version).tar.gz
 
-download: ${tarball}
+download: $(tarball)
 
-${tarball}:
-	wget --no-verbose -O $@.tmp https://github.com/golang/go/archive/refs/tags/${tarball}
+$(tarball):
+	wget --no-verbose -O $@.tmp https://github.com/golang/go/archive/refs/tags/$(tarball)
 	mv $@.tmp $@
 
 prepare: download
@@ -21,9 +21,9 @@ test: download
 	@./test.sh
 
 clean:
-	rm -rf go-go${version} log
+	rm -rf go-go$(version) log
 
 distclean: clean
-	rm -f ${tarball}
+	rm -f $(tarball)
 
 .PHONY: download prepare test clean distclean help
