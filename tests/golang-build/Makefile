@@ -11,7 +11,7 @@ tarball = go${version}.tar.gz
 download: ${tarball}
 
 ${tarball}:
-	wget -O $@.tmp https://github.com/golang/go/archive/refs/tags/${tarball}
+	wget --no-verbose -O $@.tmp https://github.com/golang/go/archive/refs/tags/${tarball}
 	mv $@.tmp $@
 
 prepare: download
@@ -21,7 +21,7 @@ test: download
 	@./test.sh
 
 clean:
-	rm -rf go-go${version}
+	rm -rf go-go${version} log
 
 distclean: clean
 	rm -f ${tarball}
