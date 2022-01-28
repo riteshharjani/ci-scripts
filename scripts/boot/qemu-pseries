@@ -50,7 +50,7 @@ def main():
         else:
             smp = 8
 
-    cmdline = 'noreboot'
+    cmdline = 'noreboot '
 
     cloud_image = os.environ.get('CLOUD_IMAGE', False)
     if cloud_image:
@@ -67,10 +67,10 @@ def main():
         atexit.register(lambda: os.unlink(dst))
 
         if 'ubuntu' in cloud_image:
-            cmdline += ' root=/dev/vda1'
+            cmdline += 'root=/dev/vda1 '
             prompt = 'root@ubuntu:~#'
         else:
-            cmdline += ' root=/dev/vda2'
+            cmdline += 'root=/dev/vda2 '
             prompt = '\[root@fedora ~\]#'
 
         drive = f'-drive file={dst},format=qcow2,if=virtio ' \
@@ -83,6 +83,8 @@ def main():
     if host_mount and not os.path.isdir(host_mount):
         logging.error('QEMU_HOST_MOUNT must point to a directory')
         return False
+
+    cmdline += get_env_var('LINUX_CMDLINE', '')
 
     p = PexpectHelper()
     cmd = qemu_command(vmlinux=vmlinux, cpu=cpu, mem='4G', drive=drive,
