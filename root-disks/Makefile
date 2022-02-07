@@ -1,16 +1,20 @@
 IMAGES += ppc64-rootfs.cpio.gz ppc64-novsx-rootfs.cpio.gz ppc64le-rootfs.cpio.gz
 IMAGES += ppc-rootfs.cpio.gz
-IMAGES += cloud-init-user-data.img
 IMAGES += ubuntu16.04-cloudimg-powerpc.qcow2
 IMAGES += ubuntu16.04-cloudimg-ppc64el.qcow2
 IMAGES += ubuntu21.04-cloudimg-ppc64el.qcow2
 IMAGES += ubuntu21.10-cloudimg-ppc64el.qcow2
 IMAGES += fedora34-cloudimg-ppc64le.qcow2
 
-all: $(IMAGES)
+build: prepare cloud-init-user-data.img
+
+download: $(IMAGES)
+
+prepare: download
+	@./install-deps.sh
 
 define wget
-	wget -O $(1).tmp $(2)
+	wget -q -O $(1).tmp $(2)
 	mv $(1).tmp $(1)
 endef
 
@@ -63,7 +67,9 @@ cloud-init-user-data.img: cloud-init-user-data.txt
 	cloud-localds $@ $<
 
 clean:
-	@echo "Use distclean to remove rootfs images"
+	rm -f cloud-init-user-data.img
 
-distclean:
+distclean: clean
 	rm -f $(IMAGES) *.sum
+
+.PHONY: download prepare build clean distclean
