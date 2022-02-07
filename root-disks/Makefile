@@ -31,26 +31,26 @@ ppc-rootfs.cpio.gz:
 	$(call wget_lbt,$@,ppc/rootfs.cpio.gz)
 
 define wget_ubuntu
-	$(call wget,$(1),"https://cloud-images.ubuntu.com/$(2)/current/$(3)")
+	$(call wget,$(1),"https://cloud-images.ubuntu.com/releases/$(2)/release/$(3)")
 endef
 
 ubuntu16.04-cloudimg-powerpc.qcow2:
-	$(call wget_ubuntu,$@,xenial,xenial-server-cloudimg-powerpc-disk1.img)
+	$(call wget_ubuntu,$@,xenial,ubuntu-16.04-server-cloudimg-powerpc-disk1.img)
 	chmod a-w $@
 	sha256sum $@ > $@.sum
 
 ubuntu16.04-cloudimg-ppc64el.qcow2:
-	$(call wget_ubuntu,$@,xenial,xenial-server-cloudimg-ppc64el-disk1.img)
+	$(call wget_ubuntu,$@,xenial,ubuntu-16.04-server-cloudimg-ppc64el-disk1.img)
 	chmod a-w $@
 	sha256sum $@ > $@.sum
 
 ubuntu21.04-cloudimg-ppc64el.qcow2:
-	$(call wget_ubuntu,$@,hirsute,hirsute-server-cloudimg-ppc64el.img)
+	$(call wget_ubuntu,$@,hirsute,ubuntu-21.04-server-cloudimg-ppc64el.img)
 	chmod a-w $@
 	sha256sum $@ > $@.sum
 
 ubuntu21.10-cloudimg-ppc64el.qcow2:
-	$(call wget_ubuntu,$@,impish,impish-server-cloudimg-ppc64el.img)
+	$(call wget_ubuntu,$@,impish,ubuntu-21.10-server-cloudimg-ppc64el.img)
 	chmod a-w $@
 	sha256sum $@ > $@.sum
 
