@@ -18,7 +18,7 @@ prepare: download
 	@./install-deps.sh
 
 test: download
-	@./test.sh
+	+@./test.sh
 
 clean:
 	rm -rf go-go$(version) log
