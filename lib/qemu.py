@@ -1,8 +1,10 @@
+import atexit
 import os
 import sys
 import logging
-from utils import get_env_var, get_endian
-from pexpect_utils import PexpectHelper
+from utils import *
+from pexpect_utils import PexpectHelper, standard_boot, ping_test, wget_test
+from subprocess import check_call
 
 
 def get_qemu(name='qemu-system-ppc64'):
@@ -106,3 +108,104 @@ def qemu_net_setup(p, iface='eth0'):
     p.cmd('ip addr show')
     p.cmd('route add default gw 10.0.2.2')
     p.cmd('route -n')
+
+
+def qemu_main(qemu_machine, cpuinfo_platform, cpu, net):
+    expected_release = get_expected_release()
+    if expected_release is None:
+        return False
+
+    vmlinux = get_vmlinux()
+    if vmlinux is None:
+        return False
+
+    accel = get_env_var('ACCEL', 'tcg')
+
+    smp = get_env_var('SMP', None)
+    if smp is None:
+        if accel == 'tcg':
+            smp = 2
+        else:
+            smp = 8
+
+    cmdline = 'noreboot '
+
+    cloud_image = os.environ.get('CLOUD_IMAGE', False)
+    if cloud_image:
+        setup_timeout(600)
+
+        # Create snapshot image
+        rdpath = get_root_disk_path()
+        src = f'{rdpath}/{cloud_image}'
+        pid = os.getpid()
+        dst = f'{rdpath}/qemu-temp-{pid}.img'
+        cmd = f'qemu-img create -f qcow2 -F qcow2 -b {src} {dst}'.split()
+        check_call(cmd)
+
+        atexit.register(lambda: os.unlink(dst))
+
+        if 'ubuntu' in cloud_image:
+            cmdline += 'root=/dev/vda1 '
+            prompt = 'root@ubuntu:~#'
+        else:
+            cmdline += 'root=/dev/vda2 '
+            prompt = '\[root@fedora ~\]#'
+
+        drive = f'-drive file={dst},format=qcow2,if=virtio ' \
+                f'-drive file={rdpath}/cloud-init-user-data.img,if=virtio,format=raw,readonly=on'
+    else:
+        setup_timeout(120)
+        drive = None
+
+    host_mount = os.environ.get('QEMU_HOST_MOUNT', '')
+    if host_mount and not os.path.isdir(host_mount):
+        logging.error('QEMU_HOST_MOUNT must point to a directory')
+        return False
+
+    cmdline += get_env_var('LINUX_CMDLINE', '')
+
+    p = PexpectHelper()
+
+    cmd = qemu_command(machine=qemu_machine, cpu=cpu, mem='4G', smp=smp, vmlinux=vmlinux,
+                       drive=drive, host_mount=host_mount, cmdline=cmdline, accel=accel,
+                       net=net)
+
+    p.spawn(cmd, logfile=open('console.log', 'w'))
+
+    if cloud_image:
+        standard_boot(p, prompt=prompt, login=True, password='linuxppc', timeout=300)
+    else:
+        standard_boot(p)
+
+    p.send("echo -n 'booted-revision: '; uname -r")
+    p.expect(f'booted-revision: {expected_release}')
+    p.expect_prompt()
+
+    p.send('cat /proc/cpuinfo')
+    p.expect(cpuinfo_platform)
+    p.expect_prompt()
+
+    if os.environ.get('QEMU_NET_TESTS', True) != '0':
+        qemu_net_setup(p)
+        ping_test(p)
+        wget_test(p)
+
+    if host_mount:
+        # Clear timeout, we don't know how long it will take
+        setup_timeout(0)
+        p.cmd('mkdir -p /mnt')
+        p.cmd('mount -t 9p -o version=9p2000.L,trans=virtio host /mnt')
+        host_command = os.environ.get('QEMU_HOST_COMMAND', 'run')
+        p.send(f'[ -x /mnt/{host_command} ] && (cd /mnt && ./{host_command})')
+        p.expect_prompt(timeout=None) # no timeout
+
+    p.send('halt')
+    p.wait_for_exit()
+
+    if filter_log_warnings(open('console.log'), open('warnings.txt', 'w')):
+        logging.error('Errors/warnings seen in console.log')
+        return False
+
+    logging.info('Test completed OK')
+
+    return True
