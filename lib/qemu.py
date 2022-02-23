@@ -151,8 +151,16 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net):
             cmdline += 'root=/dev/vda2 '
             prompt = '\[root@fedora ~\]#'
 
-        drive = f'-drive file={dst},format=qcow2,if=virtio ' \
-                f'-drive file={rdpath}/cloud-init-user-data.img,if=virtio,format=raw,readonly=on'
+        if 'powernv' in qemu_machine:
+            interface = 'none'
+            drive = '-device virtio-blk-pci,drive=drive0,id=blk0,bus=pcie.0 ' \
+                    '-device virtio-blk-pci,drive=drive1,id=blk1,bus=pcie.1 '
+        else:
+            interface = 'virtio'
+            drive = ''
+
+        drive += f'-drive file={dst},format=qcow2,if={interface},id=drive0 ' \
+                 f'-drive file={rdpath}/cloud-init-user-data.img,format=raw,if={interface},readonly=on,id=drive1'
     else:
         setup_timeout(120)
         drive = None
