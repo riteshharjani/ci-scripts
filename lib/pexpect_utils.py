@@ -31,8 +31,8 @@ class PexpectHelper:
     def log_to(self, output_file):
         self.child.logfile_read = output_file
 
-    def wait_for_exit(self):
-        self.child.expect(pexpect.EOF)
+    def wait_for_exit(self, timeout=-1):
+        self.child.expect(pexpect.EOF, timeout=timeout)
         self.child.wait()
 
     def terminate(self):

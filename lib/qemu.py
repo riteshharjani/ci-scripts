@@ -208,7 +208,7 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net):
         p.expect_prompt(timeout=None) # no timeout
 
     p.send('halt')
-    p.wait_for_exit()
+    p.wait_for_exit(timeout=boot_timeout)
 
     if filter_log_warnings(open('console.log'), open('warnings.txt', 'w')):
         logging.error('Errors/warnings seen in console.log')
