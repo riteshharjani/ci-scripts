@@ -1,10 +1,10 @@
 import atexit
 import os
 import sys
+import subprocess
 import logging
 from utils import *
 from pexpect_utils import PexpectHelper, standard_boot, ping_test, wget_test
-from subprocess import check_call
 
 
 def get_qemu(name='qemu-system-ppc64'):
@@ -144,7 +144,7 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
         pid = os.getpid()
         dst = f'{rdpath}/qemu-temp-{pid}.img'
         cmd = f'qemu-img create -f qcow2 -F qcow2 -b {src} {dst}'.split()
-        check_call(cmd)
+        subprocess.run(cmd, check=True)
 
         atexit.register(lambda: os.unlink(dst))
 
@@ -190,6 +190,12 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
     cmd = qemu_command(machine=qemu_machine, cpu=cpu, mem='4G', smp=smp, vmlinux=vmlinux,
                        drive=drive, host_mount=host_mount, cmdline=cmdline, accel=accel,
                        net=net, gdb=gdb)
+
+    if '--interactive' in args:
+        logging.info("Running interactively ...")
+        setup_timeout(0)
+        rc = subprocess.run(cmd, shell=True).returncode
+        return rc == 0
 
     p.spawn(cmd, logfile=open('console.log', 'w'))
 
