@@ -19,6 +19,7 @@ RUN apt-get -q -y update && \
       cpio \
       crossbuild-essential-powerpc \
       gcc-multilib-powerpc-linux-gnu \
+      dwarves \
       file \
       flex \
       gcc \
