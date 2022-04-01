@@ -17,7 +17,7 @@ script_base="$(realpath "$dir")"
 
 IFS=@ read -r task subarch distro version <<< "$1"
 
-image="linuxppc/build:$distro-$version"
+image="docker.io/linuxppc/build:$distro-$version"
 
 SRC="${SRC/#\~/$HOME}"
 SRC=$(realpath "$SRC")
