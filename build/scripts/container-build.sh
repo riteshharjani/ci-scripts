@@ -78,6 +78,10 @@ if [[ "$1" == "kernel" ]]; then
 
     rc=$?
 
+    if [[ -n "$MOD2YES" ]]; then
+        (set -x; make $verbose $quiet "$cc" mod2yesconfig)
+    fi
+
     if [[ $rc -eq 0 ]]; then
         if [[ -n "$SPARSE" ]]; then
             rm -f /output/sparse.log

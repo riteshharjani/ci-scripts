@@ -105,6 +105,10 @@ if [[ "$task" == "kernel" ]]; then
 	cmd+="-e MERGE_CONFIG=$MERGE_CONFIG "
     fi
 
+    if [[ -n "$MOD2YES" ]]; then
+	cmd+="-e MOD2YES=1 "
+    fi
+
     if [[ -n "$CLANG" ]]; then
         cmd+="-e CLANG=1 "
     fi
