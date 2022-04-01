@@ -63,7 +63,7 @@ KORG_DISTROS := korg@11.1.0 korg@10.3.0 korg@9.3.0 korg@8.1.0 korg@5.5.0
 ALL_DISTROS := ${UBUNTU_DISTROS} ${KORG_DISTROS} ${FEDORA_DISTROS}
 DOCS_DISTRO := docs@21.10
 X86_DISTRO := ubuntu@21.10
-SUBARCHES := ppc64le ppc64
+SUBARCHES := ppc64le ppc64 ppc
 
 $(eval $(call MAIN_TEMPLATE,ppc64le,${DOCS_DISTRO}))
 $(eval $(call DOCS_TEMPLATE,ppc64le,${DOCS_DISTRO}))
