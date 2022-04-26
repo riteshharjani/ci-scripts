@@ -47,7 +47,7 @@ def get_qemu_version(emulator):
 
 def qemu_command(qemu='qemu-system-ppc64', machine='pseries,cap-htm=off', cpu=None,
                  mem='1G', smp=1, vmlinux=None, initrd=None, drive=None,
-                 host_mount=None, cmdline='', accel='tcg', net='-nic user'):
+                 host_mount=None, cmdline='', accel='tcg', net='-nic user', gdb=None):
 
     qemu_path = get_qemu(qemu)
     logging.info('Using qemu version %s.%s' % get_qemu_version(qemu_path))
@@ -95,6 +95,9 @@ def qemu_command(qemu='qemu-system-ppc64', machine='pseries,cap-htm=off', cpu=No
         l.append('-append')
         l.append(f'"{cmdline}"')
 
+    if gdb:
+        l.append(gdb)
+
     logging.debug(l)
 
     return ' '.join(l)
@@ -110,7 +113,7 @@ def qemu_net_setup(p, iface='eth0'):
     p.cmd('route -n')
 
 
-def qemu_main(qemu_machine, cpuinfo_platform, cpu, net):
+def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
     expected_release = get_expected_release()
     if expected_release is None:
         return False
@@ -133,6 +136,7 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net):
     cloud_image = os.environ.get('CLOUD_IMAGE', False)
     if cloud_image:
         setup_timeout(600)
+        boot_timeout = 300
 
         # Create snapshot image
         rdpath = get_root_disk_path()
@@ -163,6 +167,7 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net):
                  f'-drive file={rdpath}/cloud-init-user-data.img,format=raw,if={interface},readonly=on,id=drive1'
     else:
         setup_timeout(120)
+        boot_timeout = 120
         drive = None
 
     host_mount = os.environ.get('QEMU_HOST_MOUNT', '')
@@ -174,14 +179,22 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net):
 
     p = PexpectHelper()
 
+    if '--gdb' in args:
+        gdb = '-s -S'
+        p.timeout = None
+        boot_timeout = None
+        setup_timeout(0)
+    else:
+        gdb = None
+
     cmd = qemu_command(machine=qemu_machine, cpu=cpu, mem='4G', smp=smp, vmlinux=vmlinux,
                        drive=drive, host_mount=host_mount, cmdline=cmdline, accel=accel,
-                       net=net)
+                       net=net, gdb=gdb)
 
     p.spawn(cmd, logfile=open('console.log', 'w'))
 
     if cloud_image:
-        standard_boot(p, prompt=prompt, login=True, password='linuxppc', timeout=300)
+        standard_boot(p, prompt=prompt, login=True, password='linuxppc', timeout=boot_timeout)
     else:
         standard_boot(p)
 

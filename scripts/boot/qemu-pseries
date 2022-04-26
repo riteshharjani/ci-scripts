@@ -31,6 +31,6 @@ def main():
     cpu = get_env_var('CPU', 'POWER8')
 
     return qemu_main('pseries,cap-htm=off', 'IBM pSeries \(emulated by qemu\)', cpu,
-                      net='-nic user,model=virtio-net-pci')
+                      net='-nic user,model=virtio-net-pci', args=sys.argv[1:])
 
 sys.exit(0 if main() else 1)
