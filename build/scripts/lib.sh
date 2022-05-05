@@ -72,7 +72,7 @@ function get_output_dir()
     return 0
 }
 
-grep "^NAME=Fedora$" /etc/os-release > /dev/null
+podman --version > /dev/null
 if [[ $? -eq 0 ]]; then
     DOCKER="podman"
     PODMAN_OPTS="--security-opt label=disable --userns=keep-id"
