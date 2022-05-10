@@ -1,5 +1,13 @@
 all: help
 
+FEDORA_DISTROS := fedora@35 fedora@34 fedora@33 fedora@31
+UBUNTU_DISTROS := ubuntu@21.10 ubuntu@21.04 ubuntu@20.04 ubuntu@18.04 ubuntu@16.04
+KORG_DISTROS := korg@11.1.0 korg@10.3.0 korg@9.3.0 korg@8.1.0 korg@5.5.0
+ALL_DISTROS := ${UBUNTU_DISTROS} ${KORG_DISTROS} ${FEDORA_DISTROS}
+DOCS_DISTRO := docs@21.10
+X86_DISTRO := ubuntu@21.10
+SUBARCHES := ppc64le ppc64 ppc
+
 VERSION:
 	@(git describe --always --long --dirty --abbrev=40) > VERSION
 
@@ -56,14 +64,6 @@ docs@${1}@${2}: image@${1}@${2}
 
 DOCS += docs@${1}@${2}
 endef
-
-FEDORA_DISTROS := fedora@35 fedora@34 fedora@33 fedora@31
-UBUNTU_DISTROS := ubuntu@21.10 ubuntu@21.04 ubuntu@20.04 ubuntu@18.04 ubuntu@16.04
-KORG_DISTROS := korg@11.1.0 korg@10.3.0 korg@9.3.0 korg@8.1.0 korg@5.5.0
-ALL_DISTROS := ${UBUNTU_DISTROS} ${KORG_DISTROS} ${FEDORA_DISTROS}
-DOCS_DISTRO := docs@21.10
-X86_DISTRO := ubuntu@21.10
-SUBARCHES := ppc64le ppc64 ppc
 
 $(eval $(call MAIN_TEMPLATE,ppc64le,${DOCS_DISTRO}))
 $(eval $(call DOCS_TEMPLATE,ppc64le,${DOCS_DISTRO}))
