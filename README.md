@@ -56,6 +56,7 @@ There are images for various toolchains, they are encoded in the distro name/ver
  - kernel.org gcc 9.3.0 `korg@9.3.0`
  - kernel.org gcc 8.1.0 `korg@8.1.0`
  - kernel.org gcc 5.5.0 `korg@5.5.0`
+ - Ubuntu 22.04 `ubuntu@22.04`
  - Ubuntu 21.10 `ubuntu@21.10`
  - Ubuntu 21.04 `ubuntu@21.04`
  - Ubuntu 20.04 `ubuntu@20.04`
