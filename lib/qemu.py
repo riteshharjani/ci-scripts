@@ -197,7 +197,8 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
         rc = subprocess.run(cmd, shell=True).returncode
         return rc == 0
 
-    p.spawn(cmd, logfile=open('console.log', 'w'))
+    logpath = get_env_var('QEMU_CONSOLE_LOG', 'console.log')
+    p.spawn(cmd, logfile=open(logpath, 'w'))
 
     if cloud_image:
         standard_boot(p, prompt=prompt, login=True, password='linuxppc', timeout=boot_timeout)
@@ -229,8 +230,8 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
     p.send('halt')
     p.wait_for_exit(timeout=boot_timeout)
 
-    if filter_log_warnings(open('console.log'), open('warnings.txt', 'w')):
-        logging.error('Errors/warnings seen in console.log')
+    if filter_log_warnings(open(logpath), open('warnings.txt', 'w')):
+        logging.error('Errors/warnings seen in console log')
         return False
 
     logging.info('Test completed OK')
