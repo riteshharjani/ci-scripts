@@ -71,6 +71,8 @@ class QemuConfig:
                 self.cpuinfo = 'IBM pSeries \(emulated by qemu\)'
             elif self.machine_is('powernv'):
                 self.cpuinfo = 'IBM PowerNV \(emulated by qemu\)'
+            elif self.machine == 'mac99':
+                self.cpuinfo = 'PowerMac3,1 MacRISC MacRISC2 Power Macintosh'
 
         if self.qemu_path is None:
             if self.machine_is('pseries') or self.machine_is('powernv'):
@@ -87,7 +89,9 @@ class QemuConfig:
                 self.mem = '1G'
 
         if self.smp is None:
-            if self.accel == 'tcg':
+            if self.machine_is('mac99'): # Doesn't support SMP
+                self.smp = 1
+            elif self.accel == 'tcg':
                 self.smp = 2
             else:
                 self.smp = 8
