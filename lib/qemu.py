@@ -140,8 +140,6 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
 
     cloud_image = os.environ.get('CLOUD_IMAGE', False)
     if cloud_image:
-        boot_timeout = 300
-
         # Create snapshot image
         rdpath = get_root_disk_path()
         src = f'{rdpath}/{cloud_image}'
@@ -170,7 +168,6 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
         drive += f'-drive file={dst},format=qcow2,if={interface},id=drive0 ' \
                  f'-drive file={rdpath}/cloud-init-user-data.img,format=raw,if={interface},readonly=on,id=drive1'
     else:
-        boot_timeout = 120
         drive = None
 
     host_mount = os.environ.get('QEMU_HOST_MOUNT', '')
@@ -180,14 +177,13 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
 
     cmdline += get_env_var('LINUX_CMDLINE', '')
 
-    p = PexpectHelper()
+    # Default timeout for a single pexpect call
+    pexpect_timeout = 60
 
+    gdb = None
     if '--gdb' in args:
         gdb = '-s -S'
-        p.timeout = None
-        boot_timeout = None
-    else:
-        gdb = None
+        pexpect_timeout = 0
 
     cmd = qemu_command(machine=qemu_machine, cpu=cpu, mem='4G', smp=smp, vmlinux=vmlinux,
                        drive=drive, host_mount=host_mount, cmdline=cmdline, accel=accel,
@@ -198,16 +194,18 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
         rc = subprocess.run(cmd, shell=True).returncode
         return rc == 0
 
-    if not gdb:
-        setup_timeout(600)
+    setup_timeout(10 * pexpect_timeout)
+    boot_timeout = pexpect_timeout * 5
 
     logpath = get_env_var('QEMU_CONSOLE_LOG', 'console.log')
-    p.spawn(cmd, logfile=open(logpath, 'w'))
+
+    p = PexpectHelper()
+    p.spawn(cmd, logfile=open(logpath, 'w'), timeout=pexpect_timeout)
 
     if cloud_image:
         standard_boot(p, prompt=prompt, login=True, password='linuxppc', timeout=boot_timeout)
     else:
-        standard_boot(p)
+        standard_boot(p, timeout=boot_timeout)
 
     p.send("echo -n 'booted-revision: '; uname -r")
     p.expect(f'booted-revision: {expected_release}')
