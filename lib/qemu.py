@@ -140,7 +140,6 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
 
     cloud_image = os.environ.get('CLOUD_IMAGE', False)
     if cloud_image:
-        setup_timeout(600)
         boot_timeout = 300
 
         # Create snapshot image
@@ -171,7 +170,6 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
         drive += f'-drive file={dst},format=qcow2,if={interface},id=drive0 ' \
                  f'-drive file={rdpath}/cloud-init-user-data.img,format=raw,if={interface},readonly=on,id=drive1'
     else:
-        setup_timeout(120)
         boot_timeout = 120
         drive = None
 
@@ -188,7 +186,6 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
         gdb = '-s -S'
         p.timeout = None
         boot_timeout = None
-        setup_timeout(0)
     else:
         gdb = None
 
@@ -198,9 +195,11 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
 
     if '--interactive' in args:
         logging.info("Running interactively ...")
-        setup_timeout(0)
         rc = subprocess.run(cmd, shell=True).returncode
         return rc == 0
+
+    if not gdb:
+        setup_timeout(600)
 
     logpath = get_env_var('QEMU_CONSOLE_LOG', 'console.log')
     p.spawn(cmd, logfile=open(logpath, 'w'))
