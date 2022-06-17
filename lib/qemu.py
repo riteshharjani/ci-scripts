@@ -85,7 +85,12 @@ def qemu_command(qemu='qemu-system-ppc64', machine='pseries,cap-htm=off', cpu=No
         l.append(drive)
 
     if host_mount:
-        l.append(f'-virtfs local,path={host_mount},mount_tag=host,security_model=none')
+        bus = ''
+        if 'powernv' in machine:
+            bus = ',bus=pcie.0'
+
+        l.append(f'-fsdev local,id=fsdev0,path={host_mount},security_model=none')
+        l.append(f'-device virtio-9p-pci,fsdev=fsdev0,mount_tag=host{bus}')
 
     if cpu is not None:
         l.append('-cpu')
