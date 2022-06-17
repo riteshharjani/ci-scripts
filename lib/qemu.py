@@ -178,7 +178,7 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
     cmdline += get_env_var('LINUX_CMDLINE', '')
 
     # Default timeout for a single pexpect call
-    pexpect_timeout = 60
+    pexpect_timeout = int(get_env_var('QEMU_PEXPECT_TIMEOUT', 60))
 
     gdb = None
     if '--gdb' in args:
