@@ -47,7 +47,8 @@ def get_qemu_version(emulator):
 
 def qemu_command(qemu='qemu-system-ppc64', machine='pseries,cap-htm=off', cpu=None,
                  mem='1G', smp=1, vmlinux=None, initrd=None, drive=None,
-                 host_mount=None, cmdline='', accel='tcg', net='-nic user', gdb=None):
+                 host_mount=None, cmdline='', accel='tcg', net='-nic user', gdb=None,
+                 extra_args=[]):
 
     qemu_path = get_qemu(qemu)
     logging.info('Using qemu version %s.%s' % get_qemu_version(qemu_path))
@@ -102,6 +103,8 @@ def qemu_command(qemu='qemu-system-ppc64', machine='pseries,cap-htm=off', cpu=No
 
     if gdb:
         l.append(gdb)
+
+    l.extend(extra_args)
 
     logging.debug(l)
 
@@ -170,6 +173,13 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
     else:
         drive = None
 
+    extra_args = []
+    if 'pseries' in qemu_machine:
+        if accel == 'kvm':
+            extra_args = ['-device spapr-rng,use-kvm=true']
+        else:
+            extra_args = ['-device spapr-rng,rng=rng0 -object rng-random,filename=/dev/urandom,id=rng0']
+
     host_mount = os.environ.get('QEMU_HOST_MOUNT', '')
     if host_mount and not os.path.isdir(host_mount):
         logging.error('QEMU_HOST_MOUNT must point to a directory')
@@ -187,7 +197,7 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
 
     cmd = qemu_command(machine=qemu_machine, cpu=cpu, mem='4G', smp=smp, vmlinux=vmlinux,
                        drive=drive, host_mount=host_mount, cmdline=cmdline, accel=accel,
-                       net=net, gdb=gdb)
+                       net=net, gdb=gdb, extra_args=extra_args)
 
     if '--interactive' in args:
         logging.info("Running interactively ...")
