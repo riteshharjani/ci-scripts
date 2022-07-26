@@ -51,22 +51,22 @@ Different toolchains
 
 There are images for various toolchains, they are encoded in the distro name/version.
 
- - kernel.org gcc 12.1.0 `korg@12.1.0`
- - kernel.org gcc 11.1.0 `korg@11.1.0`
- - kernel.org gcc 10.3.0 `korg@10.3.0`
- - kernel.org gcc 9.3.0 `korg@9.3.0`
- - kernel.org gcc 8.1.0 `korg@8.1.0`
- - kernel.org gcc 5.5.0 `korg@5.5.0`
- - Ubuntu 22.04 `ubuntu@22.04`
- - Ubuntu 21.10 `ubuntu@21.10`
- - Ubuntu 21.04 `ubuntu@21.04`
- - Ubuntu 20.04 `ubuntu@20.04`
- - Ubuntu 18.04 `ubuntu@18.04`
- - Ubuntu 16.04 `ubuntu@16.04`
- - Fedora 35 `fedora@35`
- - Fedora 34 `fedora@34`
- - Fedora 33 `fedora@33`
- - Fedora 31 `fedora@31`
+ - `korg@12.1.0`: kernel.org gcc 12.1.0, binutils 2.38
+ - `korg@11.1.0`: kernel.org gcc 11.1.0, binutils 2.36.1
+ - `korg@10.3.0`: kernel.org gcc 10.3.0, binutils 2.36.1
+ - `korg@9.3.0`: kernel.org gcc 9.3.0, binutils 2.34
+ - `korg@8.1.0`: kernel.org gcc 8.1.0, binutils 2.30
+ - `korg@5.5.0`: kernel.org gcc 5.5.0, binutils 2.29.1
+ - `ubuntu@22.04`: Ubuntu 22.04, gcc 11.2.0, binutils 2.38
+ - `ubuntu@21.10`: Ubuntu 21.10, gcc 11.2.0, binutils 2.37
+ - `ubuntu@21.04`: Ubuntu 21.04, gcc 10.3.0, binutils 2.36.1
+ - `ubuntu@20.04`: Ubuntu 20.04, gcc 9.4.0, binutils 2.34
+ - `ubuntu@18.04`: Ubuntu 18.04, gcc 7.5.0, binutils 2.30
+ - `ubuntu@16.04`: Ubuntu 16.04, gcc 5.4.0, binutils 2.26.1
+ - `fedora@35`: Fedora 35, gcc 11.2.1, binutils 2.37-3
+ - `fedora@34`: Fedora 34, gcc 11.2.1, binutils 2.35.2
+ - `fedora@33`: Fedora 33, gcc 10.2.1, binutils 2.35.1
+ - `fedora@31`: Fedora 31, gcc 9.2.1, binutils 2.32
  
 Only the Ubuntu toolchains can build the selftests.
 
