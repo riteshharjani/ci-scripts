@@ -205,7 +205,10 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
         return rc == 0
 
     setup_timeout(10 * pexpect_timeout)
-    boot_timeout = pexpect_timeout * 5
+    if pexpect_timeout:
+        boot_timeout = pexpect_timeout * 5
+    else:
+        boot_timeout = pexpect_timeout = None
 
     logpath = get_env_var('QEMU_CONSOLE_LOG', 'console.log')
 
