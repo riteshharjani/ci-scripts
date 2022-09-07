@@ -141,7 +141,7 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
 
     cmdline = 'noreboot '
 
-    cloud_image = os.environ.get('CLOUD_IMAGE', False)
+    cloud_image = get_env_var('CLOUD_IMAGE')
     if cloud_image:
         # Create snapshot image
         rdpath = get_root_disk_path()
@@ -180,7 +180,7 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
         else:
             extra_args = ['-device spapr-rng,rng=rng0 -object rng-random,filename=/dev/urandom,id=rng0']
 
-    host_mount = os.environ.get('QEMU_HOST_MOUNT', '')
+    host_mount = get_env_var('QEMU_HOST_MOUNT')
     if host_mount and not os.path.isdir(host_mount):
         logging.error('QEMU_HOST_MOUNT must point to a directory')
         return False
@@ -228,7 +228,7 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
     p.expect(cpuinfo_platform)
     p.expect_prompt()
 
-    if os.environ.get('QEMU_NET_TESTS', True) != '0':
+    if get_env_var('QEMU_NET_TESTS', True) != '0':
         qemu_net_setup(p)
         ping_test(p)
         wget_test(p)
@@ -238,7 +238,7 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
         setup_timeout(0)
         p.cmd('mkdir -p /mnt')
         p.cmd('mount -t 9p -o version=9p2000.L,trans=virtio host /mnt')
-        host_command = os.environ.get('QEMU_HOST_COMMAND', 'run')
+        host_command = get_env_var('QEMU_HOST_COMMAND', 'run')
         p.send(f'[ -x /mnt/{host_command} ] && (cd /mnt && ./{host_command})')
         p.expect_prompt(timeout=None) # no timeout
 
