@@ -285,6 +285,8 @@ def qemu_main(qconf):
 
     cmd = qconf.cmd()
 
+    logging.info(f"Running '{cmd}'")
+
     if qconf.interactive:
         logging.info("Running interactively ...")
         if qconf.host_mount:
