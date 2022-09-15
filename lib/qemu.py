@@ -287,6 +287,10 @@ def qemu_main(qconf):
 
     if qconf.interactive:
         logging.info("Running interactively ...")
+        if qconf.host_mount:
+            logging.info("To mount the host mount point run:")
+            logging.info(" mkdir -p /mnt; mount -t 9p -o version=9p2000.L,trans=virtio host /mnt")
+
         rc = subprocess.run(cmd, shell=True).returncode
         return rc == 0
 
