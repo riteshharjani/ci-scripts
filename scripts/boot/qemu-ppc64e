@@ -44,9 +44,6 @@ def main():
     qconf.smp = 1
     qconf.cpu = 'e5500'
 
-    if os.environ.get('COMPAT_USERSPACE', False):
-        qconf.initrd = 'ppc-rootfs.cpio.gz'
-
     qconf.apply_defaults()
 
     return qemu_main(qconf)

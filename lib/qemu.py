@@ -27,6 +27,7 @@ class QemuConfig:
         self.interactive = False
         self.drive = None
         self.initrd = None
+        self.compat_rootfs = False
         self.shutdown = None
         self.extra_args = []
         self.qemu_path = None
@@ -45,6 +46,7 @@ class QemuConfig:
         self.mem = get_env_var('QEMU_MEM_SIZE', self.mem)
         self.cloud_image = get_env_var('CLOUD_IMAGE', self.cloud_image)
         self.host_mount = get_env_var('QEMU_HOST_MOUNT', self.host_mount)
+        self.compat_rootfs = get_env_var('COMPAT_USERSPACE', self.compat_rootfs)
         self.cmdline += get_env_var('LINUX_CMDLINE', '') + ' '
         self.pexpect_timeout = int(get_env_var('QEMU_PEXPECT_TIMEOUT', self.pexpect_timeout))
         self.logpath = get_env_var('QEMU_CONSOLE_LOG', self.logpath)
@@ -131,7 +133,7 @@ class QemuConfig:
                 self.prompt = '\[root@fedora ~\]#'
 
         if self.initrd is None and self.drive is None and self.cloud_image is None:
-            if self.qemu_path.endswith('qemu-system-ppc'):
+            if self.compat_rootfs or self.qemu_path.endswith('qemu-system-ppc'):
                 subarch = 'ppc'
             elif get_endian(self.vmlinux) == 'little':
                 subarch = 'ppc64le'
