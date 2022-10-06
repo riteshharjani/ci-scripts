@@ -73,6 +73,8 @@ class QemuConfig:
                 self.cpuinfo = 'IBM PowerNV \(emulated by qemu\)'
             elif self.machine == 'mac99':
                 self.cpuinfo = 'PowerMac3,1 MacRISC MacRISC2 Power Macintosh'
+            elif self.machine == 'g3beige':
+                self.cpuinfo = 'AAPL,PowerMac G3 MacRISC'
 
         if self.qemu_path is None:
             if self.machine_is('pseries') or self.machine_is('powernv'):
