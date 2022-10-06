@@ -77,6 +77,8 @@ class QemuConfig:
                 self.cpuinfo = 'AAPL,PowerMac G3 MacRISC'
             elif self.machine == 'bamboo':
                 self.cpuinfo = 'PowerPC 44x Platform'
+            elif self.machine == 'ppce500':
+                self.cpuinfo = 'QEMU ppce500'
 
         if self.qemu_path is None:
             if self.machine_is('pseries') or self.machine_is('powernv'):
