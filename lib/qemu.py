@@ -75,6 +75,8 @@ class QemuConfig:
                 self.cpuinfo = 'PowerMac3,1 MacRISC MacRISC2 Power Macintosh'
             elif self.machine == 'g3beige':
                 self.cpuinfo = 'AAPL,PowerMac G3 MacRISC'
+            elif self.machine == 'bamboo':
+                self.cpuinfo = 'PowerPC 44x Platform'
 
         if self.qemu_path is None:
             if self.machine_is('pseries') or self.machine_is('powernv'):
@@ -195,6 +197,12 @@ class QemuConfig:
         logging.debug(l)
 
         return ' '.join(l)
+
+
+def qemu_monitor_shutdown(p):
+    p.send('\x01c') # invoke qemu monitor
+    p.expect('\(qemu\)')
+    p.send('quit')
 
 
 def get_qemu(name='qemu-system-ppc64'):
