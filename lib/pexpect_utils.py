@@ -63,15 +63,19 @@ class PexpectHelper:
     def matches(self):
         return self.child.match.groups()
 
-    def expect(self, patterns, timeout=-1):
+    def expect(self, patterns, timeout=-1, bug_patterns=None):
         if type(patterns) is str:
             patterns = [patterns]
 
-        patterns.extend(self.bug_patterns)
+        if bug_patterns is None:
+            bug_patterns = self.bug_patterns
+
+        patterns.extend(bug_patterns)
+
         idx = self.child.expect(patterns, timeout=timeout)
         logging.debug("Matched: '%s' %s", self.get_match(), self.matches())
 
-        if idx >= len(patterns) - len(self.bug_patterns):
+        if idx >= len(patterns) - len(bug_patterns):
             self.drain_and_terminate(self.child, "Error: saw oops/warning etc. while expecting")
 
         return idx
