@@ -70,7 +70,7 @@ def main():
         ping_test(p, check=False)
         wget_test(p)
 
-    p.send("echo o > /proc/sysrq-trigger")
+    p.send('poweroff')
     p.wait_for_exit()
 
     if filter_log_warnings(open('console.log'), open('warnings.txt', 'w')):
