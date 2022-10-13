@@ -42,7 +42,7 @@ def main():
         return False
 
     p = PexpectHelper()
-    cmd = qemu_command(vmlinux=vmlinux, machine='mac99', cmdline='noreboot')
+    cmd = qemu_command(vmlinux=vmlinux, machine='mac99,via=pmu', cmdline='noreboot')
     p.spawn(cmd, logfile=open('console.log', 'w'))
 
     standard_boot(p)
@@ -60,11 +60,7 @@ def main():
         ping_test(p)
         wget_test(p)
 
-    p.send("halt")
-    p.expect("reboot: System halted")
-    p.send("\x01c") # invoke qemu monitor
-    p.expect("\(qemu\)")
-    p.send("quit")
+    p.send("poweroff")
     p.wait_for_exit()
 
     if filter_log_warnings(open('console.log'), open('warnings.txt', 'w')):
