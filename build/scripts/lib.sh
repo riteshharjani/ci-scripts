@@ -68,7 +68,10 @@ function get_output_dir()
     esac
 
     if [[ -n "$clang" ]]; then
-	d="${d}_clang"
+        # Append "+clang" if it's not already part of the defconfig name
+        if [[ "$defconfig" != *"+"* ]]; then
+            d="${d}+clang"
+        fi
     fi
 
     echo "$d"
