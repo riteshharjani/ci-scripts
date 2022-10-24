@@ -242,7 +242,7 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
         p.send(f'[ -x /mnt/{host_command} ] && (cd /mnt && ./{host_command})')
         p.expect_prompt(timeout=None) # no timeout
 
-    p.send('halt')
+    p.send('poweroff')
     p.wait_for_exit(timeout=boot_timeout)
 
     if filter_log_warnings(open(logpath), open('warnings.txt', 'w')):
