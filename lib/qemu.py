@@ -175,10 +175,11 @@ def qemu_main(qemu_machine, cpuinfo_platform, cpu, net, args):
 
     extra_args = []
     if 'pseries' in qemu_machine:
+        rng = '-object rng-random,filename=/dev/urandom,id=rng0 -device spapr-rng,rng=rng0'
         if accel == 'kvm':
-            extra_args = ['-device spapr-rng,use-kvm=true']
-        else:
-            extra_args = ['-device spapr-rng,rng=rng0 -object rng-random,filename=/dev/urandom,id=rng0']
+            rng += ',use-kvm=true'
+
+        extra_args += [rng]
 
     host_mount = get_env_var('QEMU_HOST_MOUNT')
     if host_mount and not os.path.isdir(host_mount):
