@@ -44,6 +44,7 @@ class QemuConfig:
         self.cpu = get_env_var('CPU', self.cpu)
         self.smp = get_env_var('SMP', self.smp)
         self.mem = get_env_var('QEMU_MEM_SIZE', self.mem)
+        self.initrd = get_env_var('QEMU_INITRD', self.initrd)
         self.cloud_image = get_env_var('CLOUD_IMAGE', self.cloud_image)
         self.host_mount = get_env_var('QEMU_HOST_MOUNT', self.host_mount)
         self.compat_rootfs = get_env_var('COMPAT_USERSPACE', self.compat_rootfs)
