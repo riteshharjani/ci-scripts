@@ -65,8 +65,14 @@ class QemuConfig:
             self.interactive = True
 
     def apply_defaults(self):
-        if self.machine_is('pseries') and self.accel == 'tcg':
-            self.machine_caps += ['cap-htm=off']
+        if self.machine_is('pseries'):
+            if self.accel == 'tcg':
+                self.machine_caps += ['cap-htm=off']
+
+            if self.cpu and self.accel == 'kvm':
+                if self.cpu != 'host':
+                    self.machine_caps += ['max-cpu-compat=%s' % self.cpu.lower()]
+                self.cpu = None
 
         if self.cpuinfo is None:
             if self.machine_is('pseries'):
