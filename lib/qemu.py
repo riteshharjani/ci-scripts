@@ -317,7 +317,7 @@ def qemu_main(qconf):
 
     standard_boot(p, qconf.login, qconf.user, qconf.password, boot_timeout, qconf.prompt)
 
-    p.send("echo -n 'booted-revision: '; uname -r")
+    p.send('echo "booted-revision: `uname -r`"')
     p.expect(f'booted-revision: {qconf.expected_release}')
     p.expect_prompt()
 
