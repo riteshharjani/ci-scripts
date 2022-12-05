@@ -16,7 +16,7 @@ class QemuConfig:
         self.accel = 'tcg'
         self.smp = None
         self.cloud_image = None
-        self.host_mount = None
+        self.host_mounts = []
         self.cmdline = 'noreboot '
         self.pexpect_timeout = 60
         self.logpath = 'console.log'
@@ -46,7 +46,6 @@ class QemuConfig:
         self.mem = get_env_var('QEMU_MEM_SIZE', self.mem)
         self.initrd = get_env_var('QEMU_INITRD', self.initrd)
         self.cloud_image = get_env_var('CLOUD_IMAGE', self.cloud_image)
-        self.host_mount = get_env_var('QEMU_HOST_MOUNT', self.host_mount)
         self.compat_rootfs = get_env_var('COMPAT_USERSPACE', self.compat_rootfs)
         self.cmdline += get_env_var('LINUX_CMDLINE', '') + ' '
         self.pexpect_timeout = int(get_env_var('QEMU_PEXPECT_TIMEOUT', self.pexpect_timeout))
@@ -56,6 +55,11 @@ class QemuConfig:
         self.expected_release = get_expected_release()
         self.vmlinux = get_vmlinux()
         self.cpuinfo = None
+
+        val = get_env_var('QEMU_HOST_MOUNTS', None)
+        if val:
+            self.host_mounts.extend(val.split(':'))
+
 
     def configure_from_args(self, args):
         if '--gdb' in args:
@@ -154,13 +158,17 @@ class QemuConfig:
 
             self.initrd = f'{subarch}-rootfs.cpio.gz'
 
-        if self.host_mount:
-            bus = ''
-            if self.machine_is('powernv'):
-                bus = ',bus=pcie.2'
+        if self.host_mounts:
+            i = 0
+            for path in self.host_mounts:
+                if self.machine_is('powernv'):
+                    bus = f',bus=pcie.{i+2}'
+                else:
+                    bus = ''
 
-            self.extra_args.append(f'-fsdev local,id=fsdev0,path={self.host_mount},security_model=none')
-            self.extra_args.append(f'-device virtio-9p-pci,fsdev=fsdev0,mount_tag=host{bus}')
+                self.extra_args.append(f'-fsdev local,id=fsdev{i},path={path},security_model=none')
+                self.extra_args.append(f'-device virtio-9p-pci,fsdev=fsdev{i},mount_tag=host{i}{bus}')
+                i += 1
 
         if self.machine_is('pseries'):
             rng = '-object rng-random,filename=/dev/urandom,id=rng0 -device spapr-rng,rng=rng0'
@@ -271,9 +279,10 @@ def qemu_main(qconf):
     if qconf.expected_release is None or qconf.vmlinux is None:
         return False
 
-    if qconf.host_mount and not os.path.isdir(qconf.host_mount):
-        logging.error('QEMU_HOST_MOUNT must point to a directory')
-        return False
+    for path in qconf.host_mounts:
+        if not os.path.isdir(path):
+            logging.error(f"QEMU_HOST_MOUNTS must point to directories. Not found: '{path}'")
+            return False
 
     if qconf.cloud_image:
         # Create snapshot image
@@ -301,9 +310,9 @@ def qemu_main(qconf):
 
     if qconf.interactive:
         logging.info("Running interactively ...")
-        if qconf.host_mount:
-            logging.info("To mount the host mount point run:")
-            logging.info(" mkdir -p /mnt; mount -t 9p -o version=9p2000.L,trans=virtio host /mnt")
+        if qconf.host_mounts:
+            logging.info("To mount host mount points run:")
+            logging.info(" mkdir -p /mnt; mount -t 9p -o version=9p2000.L,trans=virtio host0 /mnt")
 
         rc = subprocess.run(cmd, shell=True).returncode
         return rc == 0
@@ -333,13 +342,17 @@ def qemu_main(qconf):
         qemu_net_setup(p)
         ping_test(p)
 
-    if qconf.host_mount:
+    if qconf.host_mounts:
         # Clear timeout, we don't know how long it will take
         setup_timeout(0)
-        p.cmd('mkdir -p /mnt')
-        p.cmd('mount -t 9p -o version=9p2000.L,trans=virtio host /mnt')
-        p.send(f'[ -x /mnt/{qconf.host_command} ] && (cd /mnt && ./{qconf.host_command})')
-        p.expect_prompt(timeout=None) # no timeout
+
+        for i in range(0, len(qconf.host_mounts)):
+            p.cmd(f'mkdir -p /mnt/host{i}')
+            p.cmd(f'mount -t 9p -o version=9p2000.L,trans=virtio host{i} /mnt/host{i}')
+
+        for i in range(0, len(qconf.host_mounts)):
+            p.send(f'[ -x /mnt/host{i}/{qconf.host_command} ] && (cd /mnt/host{i} && ./{qconf.host_command})')
+            p.expect_prompt(timeout=None) # no timeout
 
     if qconf.shutdown:
         qconf.shutdown(p)
