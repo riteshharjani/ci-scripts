@@ -135,9 +135,12 @@ class QemuConfig:
             if 'ubuntu' in self.cloud_image:
                 self.cmdline += 'root=/dev/vda1 '
                 self.prompt = 'root@ubuntu:~#'
-            else:
+            elif 'fedora' in self.cloud_image:
                 self.cmdline += 'root=/dev/vda2 '
                 self.prompt = '\[root@fedora ~\]#'
+            elif 'debian' in self.cloud_image:
+                self.cmdline += 'root=/dev/vda2 '
+                self.prompt = 'root@debian:~#'
 
         if self.initrd is None and self.drive is None and self.cloud_image is None:
             if self.compat_rootfs or self.qemu_path.endswith('qemu-system-ppc'):
