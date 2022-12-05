@@ -332,7 +332,6 @@ def qemu_main(qconf):
     if qconf.net_tests:
         qemu_net_setup(p)
         ping_test(p)
-        wget_test(p)
 
     if qconf.host_mount:
         # Clear timeout, we don't know how long it will take
