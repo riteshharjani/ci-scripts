@@ -266,6 +266,44 @@ def get_qemu_version(emulator):
     return (int(major), int(minor))
 
 
+def qemu_supports_p10(path):
+    major, _ = get_qemu_version(path)
+    return major >= 7
+
+
+def get_host_cpu():
+    f = open('/proc/cpuinfo')
+    while True:
+        # Not pretty but works
+        l = f.readline()
+        words = l.split()
+        if words[0] == 'cpu':
+            return words[2]
+
+
+def kvm_possible(machine, cpu):
+    if machine == 'pseries' and os.path.exists('/sys/module/kvm_hv'):
+        host_cpu = get_host_cpu()
+        if host_cpu == 'POWER8':
+            supported = ['POWER8']
+        elif host_cpu == 'POWER9':
+            supported = ['POWER8', 'POWER9']
+        elif host_cpu == 'POWER10':
+            supported = ['POWER8', 'POWER9', 'POWER10']
+        else:
+            supported = []
+
+        return cpu in supported
+
+    return False
+
+
+def kvm_or_tcg(machine, cpu):
+    if kvm_possible(machine, cpu):
+        return 'kvm'
+    return 'tcg'
+
+
 def qemu_net_setup(p, iface='eth0'):
     p.cmd('ip addr show')
     p.cmd('ls -l /sys/class/net')
