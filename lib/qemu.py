@@ -157,7 +157,7 @@ class QemuConfig:
         if self.host_mount:
             bus = ''
             if self.machine_is('powernv'):
-                bus = ',bus=pcie.0'
+                bus = ',bus=pcie.2'
 
             self.extra_args.append(f'-fsdev local,id=fsdev0,path={self.host_mount},security_model=none')
             self.extra_args.append(f'-device virtio-9p-pci,fsdev=fsdev0,mount_tag=host{bus}')
