@@ -29,6 +29,7 @@ class QemuConfig:
         self.initrd = None
         self.compat_rootfs = False
         self.shutdown = None
+        self.callback = None
         self.extra_args = []
         self.qemu_path = None
         self.login = False
@@ -353,6 +354,10 @@ def qemu_main(qconf):
         for i in range(0, len(qconf.host_mounts)):
             p.send(f'[ -x /mnt/host{i}/{qconf.host_command} ] && (cd /mnt/host{i} && ./{qconf.host_command})')
             p.expect_prompt(timeout=None) # no timeout
+
+    if qconf.callback and qconf.callback(p) is False:
+        logging.error("Callback failed")
+        return False
 
     if qconf.shutdown:
         qconf.shutdown(p)
