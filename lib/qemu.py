@@ -20,6 +20,7 @@ class QemuConfig:
         self.cmdline = 'noreboot '
         self.pexpect_timeout = 60
         self.logpath = 'console.log'
+        self.quiet = False
         self.net = None
         self.net_tests = True
         self.host_command = 'run'
@@ -51,6 +52,7 @@ class QemuConfig:
         self.cmdline += get_env_var('LINUX_CMDLINE', '') + ' '
         self.pexpect_timeout = int(get_env_var('QEMU_PEXPECT_TIMEOUT', self.pexpect_timeout))
         self.logpath = get_env_var('QEMU_CONSOLE_LOG', self.logpath)
+        self.quiet = get_env_var('QEMU_QUIET', self.quiet)
         self.net_tests = get_env_var('QEMU_NET_TESTS', self.net_tests) != '0'
         self.host_command = get_env_var('QEMU_HOST_COMMAND', self.host_command)
         self.expected_release = get_expected_release()
@@ -364,7 +366,7 @@ def qemu_main(qconf):
         boot_timeout = pexpect_timeout = None
 
     p = PexpectHelper()
-    p.spawn(cmd, logfile=open(qconf.logpath, 'w'), timeout=pexpect_timeout)
+    p.spawn(cmd, logfile=open(qconf.logpath, 'w'), timeout=pexpect_timeout, quiet=qconf.quiet)
 
     standard_boot(p, qconf.login, qconf.user, qconf.password, boot_timeout, qconf.prompt)
 
