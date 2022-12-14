@@ -24,8 +24,9 @@ class PexpectHelper:
 
     def spawn(self, *args, **kwargs):
         logging.debug("Spawning '%s'" % args)
+        quiet = kwargs.pop('quiet', False)
         self.child = pexpect.spawn(*args, encoding='utf-8', echo=False, **kwargs)
-        if '--quiet' not in sys.argv:
+        if not quiet:
             self.log_to(sys.stdout)
 
     def log_to(self, output_file):
