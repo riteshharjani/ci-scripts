@@ -182,7 +182,7 @@ class QemuConfig:
 
 
     def cmd(self):
-        logging.info('Using qemu version %s.%s' % get_qemu_version(self.qemu_path))
+        logging.info('Using qemu version %s.%s "%s"' % get_qemu_version(self.qemu_path))
 
         machine = self.machine
         if len(self.machine_caps):
@@ -262,14 +262,14 @@ def get_root_disk(fname):
 
 def get_qemu_version(emulator):
     p = PexpectHelper()
-    p.spawn('%s --version' % emulator)
-    p.expect('QEMU emulator version ([0-9]+)\.([0-9]+)')
-    major, minor = p.matches()
-    return (int(major), int(minor))
+    p.spawn('%s --version' % emulator, quiet=True)
+    p.expect('QEMU emulator version (([0-9]+)\.([0-9]+)[^\n]*)')
+    full, major, minor = p.matches()
+    return (int(major), int(minor), full.strip())
 
 
 def qemu_supports_p10(path):
-    major, _ = get_qemu_version(path)
+    major, _, _ = get_qemu_version(path)
     return major >= 7
 
 
