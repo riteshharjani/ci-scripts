@@ -22,6 +22,8 @@ RUN dnf -y install --setopt=install_weak_deps=False \
         hostname \
         kmod \
         libmpc-devel \
+        lld \
+        llvm \
         lz4 \
         lzop \
         make \
