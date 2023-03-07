@@ -30,6 +30,7 @@ class QemuConfig:
         self.drive = None
         self.initrd = None
         self.compat_rootfs = False
+        self.boot_func = None
         self.shutdown = None
         self.callback = None
         self.extra_args = []
@@ -190,6 +191,12 @@ class QemuConfig:
                 rng += ',use-kvm=true'
 
             self.extra_args += [rng]
+
+        if self.boot_func is None:
+            def boot(p, timeout, qconf):
+                standard_boot(p, qconf.login, qconf.user, qconf.password, timeout)
+
+            self.boot_func = boot
 
 
     def cmd(self):
@@ -381,7 +388,7 @@ def qemu_main(qconf):
     p.spawn(cmd, logfile=open(qconf.logpath, 'w'), timeout=pexpect_timeout, quiet=qconf.quiet)
 
     p.push_prompt(qconf.prompt)
-    standard_boot(p, qconf.login, qconf.user, qconf.password, boot_timeout)
+    qconf.boot_func(p, boot_timeout, qconf)
 
     p.send('echo "booted-revision: `uname -r`"')
     p.expect(f'booted-revision: {qconf.expected_release}')
