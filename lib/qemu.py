@@ -84,17 +84,17 @@ class QemuConfig:
 
         if self.cpuinfo is None:
             if self.machine_is('pseries'):
-                self.cpuinfo = 'IBM pSeries \(emulated by qemu\)'
+                self.cpuinfo = ['IBM pSeries \(emulated by qemu\)']
             elif self.machine_is('powernv'):
-                self.cpuinfo = 'IBM PowerNV \(emulated by qemu\)'
+                self.cpuinfo = ['IBM PowerNV \(emulated by qemu\)']
             elif self.machine == 'mac99':
-                self.cpuinfo = 'PowerMac3,1 MacRISC MacRISC2 Power Macintosh'
+                self.cpuinfo = ['PowerMac3,1 MacRISC MacRISC2 Power Macintosh']
             elif self.machine == 'g3beige':
-                self.cpuinfo = 'AAPL,PowerMac G3 MacRISC'
+                self.cpuinfo = ['AAPL,PowerMac G3 MacRISC']
             elif self.machine == 'bamboo':
-                self.cpuinfo = 'PowerPC 44x Platform'
+                self.cpuinfo = ['PowerPC 44x Platform']
             elif self.machine == 'ppce500':
-                self.cpuinfo = 'QEMU ppce500'
+                self.cpuinfo = ['QEMU ppce500']
 
         if self.qemu_path is None:
             if self.machine_is('pseries') or self.machine_is('powernv'):
@@ -381,7 +381,8 @@ def qemu_main(qconf):
 
     p.send('cat /proc/cpuinfo')
     if qconf.cpuinfo:
-        p.expect(qconf.cpuinfo)
+        for s in qconf.cpuinfo:
+            p.expect(s)
     p.expect_prompt()
 
     if qconf.net_tests:
