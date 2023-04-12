@@ -237,6 +237,7 @@ def qemu_monitor_shutdown(p):
 
 
 def get_qemu(name='qemu-system-ppc64'):
+    # This looks for QEMU_SYSTEM_PPC64 or QEMU_SYSTEM_PPC in the environment
     qemu = get_env_var(name.upper().replace('-', '_'))
     if qemu is None:
         # Defer to $PATH search
