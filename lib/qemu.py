@@ -95,6 +95,8 @@ class QemuConfig:
                 self.cpuinfo = ['PowerPC 44x Platform']
             elif self.machine == 'ppce500':
                 self.cpuinfo = ['QEMU ppce500']
+                if self.cpu:
+                    self.cpuinfo.insert(0, f'cpu\s+: {self.cpu}')
 
         if self.qemu_path is None:
             if self.machine_is('pseries') or self.machine_is('powernv'):
