@@ -71,7 +71,10 @@ class PexpectHelper:
         patterns.extend(bug_patterns)
 
         idx = self.child.expect(patterns, timeout=timeout)
-        logging.debug("Matched: '%s' %s", self.get_match(), self.matches())
+        if self.child.match == pexpect.TIMEOUT:
+            logging.debug("Timed out looking for a match")
+        else:
+            logging.debug("Matched: '%s' %s", self.get_match(), self.matches())
 
         if idx >= len(patterns) - len(bug_patterns):
             self.drain_and_terminate(self.child, "Error: saw oops/warning etc. while expecting")
