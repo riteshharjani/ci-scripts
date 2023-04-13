@@ -38,9 +38,12 @@ class PexpectHelper:
         self.child.terminate()
         self.wait_for_exit()
 
-    def drain_and_terminate(self):
+    def drain(self):
         # Wait for 10s out of output, which should give oopses time to be logged
         self.child.expect([pexpect.TIMEOUT, pexpect.EOF], timeout=10)
+
+    def drain_and_terminate(self):
+        self.drain()
         self.terminate()
 
     def get_match(self, i=0):
