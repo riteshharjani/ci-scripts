@@ -39,17 +39,8 @@ class PexpectHelper:
         self.wait_for_exit()
 
     def drain_and_terminate(self):
-        # Wait for the end of the oops, if it is one
-        try:
-            idx = self.child.expect(['--\[ end trace', pexpect.TIMEOUT], timeout=10)
-        except pexpect.exceptions.EOF:
-            idx = -1
-            pass
-
-        if idx == 1:
-            # That didn't match, let it run for a bit
-            time.sleep(5)
-
+        # Wait for 10s out of output, which should give oopses time to be logged
+        self.child.expect([pexpect.TIMEOUT, pexpect.EOF], timeout=10)
         self.terminate()
 
     def get_match(self, i=0):
