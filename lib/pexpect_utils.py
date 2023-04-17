@@ -38,9 +38,7 @@ class PexpectHelper:
         self.child.terminate()
         self.wait_for_exit()
 
-    def drain_and_terminate(self, msg):
-        logging.error(msg)
-
+    def drain_and_terminate(self):
         # Wait for the end of the oops, if it is one
         try:
             idx = self.child.expect(['--\[ end trace', pexpect.TIMEOUT], timeout=10)
@@ -53,7 +51,6 @@ class PexpectHelper:
             time.sleep(5)
 
         self.terminate()
-        raise Exception(msg)
 
     def get_match(self, i=0):
         return self.child.match.group(i)
@@ -77,7 +74,10 @@ class PexpectHelper:
             logging.debug("Matched: '%s' %s", self.get_match(), self.matches())
 
         if idx >= len(patterns) - len(bug_patterns):
-            self.drain_and_terminate("Error: saw oops/warning etc. while expecting")
+            msg = "Error: saw oops/warning etc. while expecting"
+            logging.error(msg)
+            self.drain_and_terminate()
+            raise Exception(msg)
 
         return idx
 
