@@ -198,6 +198,7 @@ else
         (set -x; $cmd clean)
     fi
 
+    (set -x; make $quiet -j $JFACTOR headers)
     (set -x; $cmd)
     rc=$?
     echo "## Selftest build completed rc = $rc"
