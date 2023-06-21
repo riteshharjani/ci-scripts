@@ -53,6 +53,9 @@ kernel@${1}@${2}: image@${1}@${2}
 clean-kernel@${1}@${2}:
 	@./scripts/clean.sh $$@
 
+prune-kernel@${1}@${2}:
+	@./scripts/prune.sh $$@
+
 KERNEL += $(if $(filter-out ${ALIAS_DISTROS},${2}), kernel@${1}@${2})
 endef
 
@@ -62,6 +65,9 @@ ppctests@${1}@${2} selftests@${1}@${2}: image@${1}@${2}
 
 clean-selftests@${1}@${2}:
 	@./scripts/clean.sh $$@
+
+prune-selftests@${1}@${2}:
+	@./scripts/prune.sh $$@
 
 PPCTESTS += $(if $(filter-out ${ALIAS_DISTROS},${2}), ppctests@${1}@${2})
 SELFTESTS += $(if $(filter-out ${ALIAS_DISTROS},${2}), selftests@${1}@${2})
