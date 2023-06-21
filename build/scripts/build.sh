@@ -201,6 +201,8 @@ image="linuxppc/build:$distro-$version"
 cmd+="$image "
 cmd+="/bin/container-build.sh $task"
 
+echo "## output        = $output_dir"
+
 (set -x; $cmd)
 
 ret=$?
