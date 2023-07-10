@@ -18,6 +18,7 @@ if [[ "$ID" == "fedora" ]]; then
         libcap-ng-devel \
         libpmem-devel \
         libseccomp-devel \
+        libslirp-devel \
         libudev-devel \
         meson \
         ninja-build \
@@ -32,6 +33,7 @@ elif [[ "$ID_LIKE" == "debian" ]]; then
         libglib2.0-dev \
         libpixman-1-dev \
         libseccomp-dev \
+        libslirp-dev \
         meson \
         ninja-build
      )
