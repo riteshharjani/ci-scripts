@@ -24,7 +24,7 @@ if [[ "$ID" == "fedora" ]]; then
         ninja-build \
         pixman-devel
     )
-elif [[ "$ID_LIKE" == "debian" ]]; then
+elif [[ "${ID_LIKE:-$ID}" == "debian" ]]; then
     (set -x; $sudo apt-get -y install \
         bison \
         bzip2 \
