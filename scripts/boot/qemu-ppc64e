@@ -42,7 +42,7 @@ def main():
     qconf.qemu_path = 'qemu-system-ppc64'
     qconf.net_tests = False
     qconf.mem = '4G'
-    qconf.smp = 1
+    qconf.smp = 2
 
     qconf.apply_defaults()
 
