@@ -50,6 +50,11 @@ ubuntu16.04-cloudimg-ppc64el.qcow2:
 	chmod a-w $@
 	sha256sum $@ > $@.sum
 
+ubuntu18.04-cloudimg-ppc64el.qcow2:
+	$(call wget_ubuntu,$@,bionic,ubuntu-18.04-server-cloudimg-ppc64el.img)
+	chmod a-w $@
+	sha256sum $@ > $@.sum
+
 ubuntu21.04-cloudimg-ppc64el.qcow2:
 	$(call wget_ubuntu,$@,hirsute,ubuntu-21.04-server-cloudimg-ppc64el.img)
 	chmod a-w $@
