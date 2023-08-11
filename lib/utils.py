@@ -78,16 +78,12 @@ def get_vmlinux():
 
 
 def get_expected_release():
-    path = os.environ.get('KERNEL_RELEASE_PATH', None)
-    if path is None:
-        # Assume we're running in the kernel build directory
-        path = 'include/config/kernel.release'
-        msg = f"Couldn't read {path}, export KERNEL_RELEASE_PATH"
+    env = os.environ.get('KERNEL_RELEASE_PATH', None)
+    for path in [env, 'include/config/kernel.release', 'kernel.release']:
+        if path and os.path.isfile(path):
+            break
     else:
-        msg = f"Couldn't read KERNEL_RELEASE_PATH {path}"
-
-    if not os.path.isfile(path):
-        logging.error(msg)
+        logging.error(f"Couldn't find kernel.release, export KERNEL_RELEASE_PATH")
         return None
 
     expected_release = open(path).read().strip()
