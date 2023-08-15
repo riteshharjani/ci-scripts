@@ -318,14 +318,14 @@ def kvm_or_tcg(machine, cpu):
     return 'tcg'
 
 
-def qemu_net_setup(p, iface='eth0'):
+def qemu_net_setup(p):
     p.cmd('ip addr show')
     p.cmd('ls -l /sys/class/net')
-    p.cmd(f'ip addr add dev {iface} 10.0.2.15/24')
-    p.cmd(f'ip link set {iface} up')
+    p.cmd('iface=$(ls -1d /sys/class/net/e* | head -1 | cut -d/ -f 5)')
+    p.cmd('ip addr add dev $iface 10.0.2.15/24')
+    p.cmd('ip link set $iface up')
     p.cmd('ip addr show')
-    p.cmd('route add default gw 10.0.2.2')
-    p.cmd('route -n')
+    p.cmd('ip route show')
 
 
 def qemu_main(qconf):
