@@ -198,6 +198,35 @@ class QemuConfig:
 
             self.boot_func = boot
 
+    def prepare_cloud_image(self):
+        if self.cloud_image is None:
+            return
+
+        rdpath = get_root_disk_path()
+        img_path = f'{rdpath}/{self.cloud_image}'
+
+        if self.cloud_image.endswith('.qcow2'):
+            # Create snapshot image
+            pid = os.getpid()
+            dst = f'{rdpath}/qemu-temp-{pid}.img'
+            cmd = f'qemu-img create -f qcow2 -F qcow2 -b {img_path} {dst}'.split()
+            subprocess.run(cmd, check=True)
+            atexit.register(lambda: os.unlink(dst))
+            img_path = dst
+            format = 'qcow2'
+        else:
+            format = 'raw'
+
+        if self.machine_is('powernv'):
+            interface = 'none'
+            self.extra_args.append('-device virtio-blk-pci,drive=drive0,id=blk0,bus=pcie.0')
+            self.extra_args.append('-device virtio-blk-pci,drive=drive1,id=blk1,bus=pcie.1')
+        else:
+            interface = 'virtio'
+
+        self.drive =  f'-drive file={img_path},format={format},if={interface},id=drive0 '
+        self.drive += f'-drive file={rdpath}/cloud-init-user-data.img,format=raw,if={interface},readonly=on,id=drive1'
+        
 
     def cmd(self):
         logging.info('Using qemu version %s.%s "%s"' % get_qemu_version(self.qemu_path))
@@ -344,25 +373,7 @@ def qemu_main(qconf):
             logging.error(f"QEMU_HOST_MOUNTS must point to directories. Not found: '{path}'")
             return False
 
-    if qconf.cloud_image:
-        # Create snapshot image
-        rdpath = get_root_disk_path()
-        src = f'{rdpath}/{qconf.cloud_image}'
-        pid = os.getpid()
-        dst = f'{rdpath}/qemu-temp-{pid}.img'
-        cmd = f'qemu-img create -f qcow2 -F qcow2 -b {src} {dst}'.split()
-        subprocess.run(cmd, check=True)
-        atexit.register(lambda: os.unlink(dst))
-
-        if qconf.machine_is('powernv'):
-            interface = 'none'
-            qconf.extra_args.append('-device virtio-blk-pci,drive=drive0,id=blk0,bus=pcie.0')
-            qconf.extra_args.append('-device virtio-blk-pci,drive=drive1,id=blk1,bus=pcie.1')
-        else:
-            interface = 'virtio'
-
-        qconf.drive =  f'-drive file={dst},format=qcow2,if={interface},id=drive0 '
-        qconf.drive += f'-drive file={rdpath}/cloud-init-user-data.img,format=raw,if={interface},readonly=on,id=drive1'
+    qconf.prepare_cloud_image()
 
     cmd = qconf.cmd()
 
