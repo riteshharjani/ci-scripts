@@ -27,7 +27,8 @@ class QemuConfig:
         self.host_command = 'run'
         self.gdb = None
         self.interactive = False
-        self.drive = None
+        self.drives = []
+        self.next_drive = 0
         self.initrd = None
         self.compat_rootfs = False
         self.boot_func = None
@@ -150,20 +151,17 @@ class QemuConfig:
             self.user = 'root'
 
             if 'ubuntu' in self.cloud_image:
-                self.cmdline.append('root=/dev/vda1')
                 self.prompt = 'root@ubuntu:~#'
             elif 'fedora' in self.cloud_image:
-                self.cmdline.append('root=/dev/vda2')
                 self.prompt = '\[root@fedora ~\]#'
             elif 'debian' in self.cloud_image:
-                self.cmdline.append('root=/dev/vda2')
                 self.prompt = 'root@debian:~#'
 
         if self.prompt is None:
             # Default prompt for our root disks
             self.prompt = "/ #"
 
-        if self.initrd is None and self.drive is None and self.cloud_image is None:
+        if self.initrd is None and len(self.drives) == 0 and self.cloud_image is None:
             if self.compat_rootfs or self.qemu_path.endswith('qemu-system-ppc'):
                 subarch = 'ppc'
             elif get_endian(self.vmlinux) == 'little':
@@ -200,6 +198,21 @@ class QemuConfig:
 
             self.boot_func = boot
 
+    def add_drive(self, args):
+        drive_id = self.next_drive
+        self.next_drive += 1
+
+        if self.machine_is('powernv'):
+            interface = 'none'
+            self.drives.append(f'-device virtio-blk-pci,drive=drive{drive_id},id=blk{drive_id},bus=pcie.{drive_id}')
+        else:
+            interface = 'virtio'
+
+        self.drives.append(f'-drive {args},if={interface},id=drive{drive_id}')
+
+        # Convert to drive letter
+        return chr(ord('a') + drive_id)
+        
     def prepare_cloud_image(self):
         if self.cloud_image is None:
             return
@@ -219,16 +232,13 @@ class QemuConfig:
         else:
             format = 'raw'
 
-        if self.machine_is('powernv'):
-            interface = 'none'
-            self.extra_args.append('-device virtio-blk-pci,drive=drive0,id=blk0,bus=pcie.0')
-            self.extra_args.append('-device virtio-blk-pci,drive=drive1,id=blk1,bus=pcie.1')
-        else:
-            interface = 'virtio'
-
-        self.drive =  f'-drive file={img_path},format={format},if={interface},id=drive0 '
-        self.drive += f'-drive file={rdpath}/cloud-init-user-data.img,format=raw,if={interface},readonly=on,id=drive1'
+        cloud_drive = self.add_drive(f'file={img_path},format={format}')
+        self.add_drive(f'file={rdpath}/cloud-init-user-data.img,format=raw,readonly=on')
         
+        if 'ubuntu' in self.cloud_image:
+            self.cmdline.insert(0, f'root=/dev/vd{cloud_drive}1')
+        elif 'fedora' in self.cloud_image or 'debian' in self.cloud_image:
+            self.cmdline.insert(0, f'root=/dev/vd{cloud_drive}2')
 
     def cmd(self):
         logging.info('Using qemu version %s.%s "%s"' % get_qemu_version(self.qemu_path))
@@ -255,8 +265,8 @@ class QemuConfig:
             l.append('-initrd')
             l.append(get_root_disk(self.initrd))
 
-        if self.drive:
-            l.append(self.drive)
+        if len(self.drives):
+            l.extend(self.drives)
 
         if self.cpu is not None:
             l.append('-cpu')
