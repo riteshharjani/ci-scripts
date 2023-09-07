@@ -18,7 +18,7 @@ class QemuConfig:
         self.smp = None
         self.cloud_image = None
         self.host_mounts = []
-        self.cmdline = 'noreboot '
+        self.cmdline = ['noreboot']
         self.pexpect_timeout = 60
         self.logpath = 'console.log'
         self.quiet = False
@@ -52,7 +52,6 @@ class QemuConfig:
         self.initrd = get_env_var('QEMU_INITRD', self.initrd)
         self.cloud_image = get_env_var('CLOUD_IMAGE', self.cloud_image)
         self.compat_rootfs = get_env_var('COMPAT_USERSPACE', self.compat_rootfs)
-        self.cmdline += get_env_var('LINUX_CMDLINE', '') + ' '
         self.pexpect_timeout = int(get_env_var('QEMU_PEXPECT_TIMEOUT', self.pexpect_timeout))
         self.logpath = get_env_var('QEMU_CONSOLE_LOG', self.logpath)
         self.quiet = get_env_var('QEMU_QUIET', self.quiet)
@@ -61,6 +60,9 @@ class QemuConfig:
         self.expected_release = get_expected_release()
         self.vmlinux = get_vmlinux()
         self.cpuinfo = None
+        val = get_env_var('LINUX_CMDLINE', None)
+        if val:
+            self.cmdline.append(val)
 
         val = get_env_var('QEMU_HOST_MOUNTS', None)
         if val:
@@ -148,13 +150,13 @@ class QemuConfig:
             self.user = 'root'
 
             if 'ubuntu' in self.cloud_image:
-                self.cmdline += 'root=/dev/vda1 '
+                self.cmdline.append('root=/dev/vda1')
                 self.prompt = 'root@ubuntu:~#'
             elif 'fedora' in self.cloud_image:
-                self.cmdline += 'root=/dev/vda2 '
+                self.cmdline.append('root=/dev/vda2')
                 self.prompt = '\[root@fedora ~\]#'
             elif 'debian' in self.cloud_image:
-                self.cmdline += 'root=/dev/vda2 '
+                self.cmdline.append('root=/dev/vda2')
                 self.prompt = 'root@debian:~#'
 
         if self.prompt is None:
@@ -262,7 +264,8 @@ class QemuConfig:
 
         if len(self.cmdline):
             l.append('-append')
-            l.append(f'"{self.cmdline}"')
+            cmdline = ' '.join(self.cmdline)
+            l.append(f'"{cmdline}"')
 
         l.extend(self.extra_args)
 
