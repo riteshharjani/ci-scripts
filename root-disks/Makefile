@@ -4,6 +4,7 @@ IMAGES += ubuntu16.04-cloudimg-powerpc.qcow2
 IMAGES += ubuntu16.04-cloudimg-ppc64el.qcow2
 IMAGES += ubuntu21.04-cloudimg-ppc64el.qcow2
 IMAGES += ubuntu21.10-cloudimg-ppc64el.qcow2
+IMAGES += ubuntu22.04-cloudimg-ppc64el.qcow2
 IMAGES += fedora34-cloudimg-ppc64le.qcow2
 IMAGES += fedora36-cloudimg-ppc64le.qcow2
 IMAGES += debian-sid-powerpc.qcow2
@@ -62,6 +63,11 @@ ubuntu21.04-cloudimg-ppc64el.qcow2:
 
 ubuntu21.10-cloudimg-ppc64el.qcow2:
 	$(call wget_ubuntu,$@,impish,ubuntu-21.10-server-cloudimg-ppc64el.img)
+	chmod a-w $@
+	sha256sum $@ > $@.sum
+
+ubuntu22.04-cloudimg-ppc64el.qcow2:
+	$(call wget_ubuntu,$@,jammy,ubuntu-22.04-server-cloudimg-ppc64el.img)
 	chmod a-w $@
 	sha256sum $@ > $@.sum
 
