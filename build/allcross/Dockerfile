@@ -30,6 +30,7 @@ RUN apt-get -q -y update && \
       gcc-s390x-linux-gnu g++-s390x-linux-gnu \
       gcc-sh4-linux-gnu g++-sh4-linux-gnu \
       gcc-sparc64-linux-gnu g++-sparc64-linux-gnu \
+      gcc-x86-64-linux-gnu g++-x86-64-linux-gnu \
       git \
       kmod \
       libc-dev \
