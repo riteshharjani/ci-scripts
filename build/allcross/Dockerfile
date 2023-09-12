@@ -21,7 +21,9 @@ RUN apt-get -q -y update && \
       gcc-powerpc-linux-gnu g++-powerpc-linux-gnu \
       gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
       gcc-alpha-linux-gnu g++-alpha-linux-gnu \
+      gcc-arc-linux-gnu g++-arc-linux-gnu \
       gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
+      gcc-hppa-linux-gnu g++-hppa-linux-gnu \
       gcc-i686-linux-gnu g++-i686-linux-gnu \
       gcc-m68k-linux-gnu g++-m68k-linux-gnu \
       gcc-mips64el-linux-gnuabi64 g++-mips64el-linux-gnuabi64 \

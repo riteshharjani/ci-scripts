@@ -25,10 +25,14 @@ alternate_binds=$(get_alternate_binds)
 arch=$subarch
 if [[ "$subarch" == "alpha" ]]; then
     cross="alpha-linux-gnu-"
+elif [[ "$subarch" == "arc" ]]; then
+    cross="arc-linux-gnu-"
 elif [[ "$subarch" == "arm" ]]; then
     cross="arm-linux-gnueabihf-"
 elif [[ "$subarch" == "arm64" ]]; then
     cross="aarch64-linux-gnu-"
+elif [[ "$subarch" == "parisc" ]]; then
+    cross="hppa-linux-gnu-"
 elif [[ "$subarch" == "i686" ]]; then
     cross="i686-linux-gnu-"
     arch=x86
