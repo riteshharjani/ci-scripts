@@ -22,7 +22,7 @@ from="docker.io/$distro:$version"
 if [[ "$distro" == "docs" ]]; then
     from="docker.io/ubuntu:$version"
 elif [[ "$distro" == "allcross" ]]; then
-    from="linuxppc/build:ubuntu-$version"
+    from="docker.io/debian:$version"
 elif [[ "$distro" == "korg" ]]; then
     # Use an older distro for the 5.x toolchains.
     if [[ "$version" == 5.* ]]; then

@@ -22,7 +22,7 @@ ALL_DISTROS := ${UBUNTU_DISTROS} ${KORG_DISTROS} ${FEDORA_DISTROS}
 DOCS_DISTRO := docs@${UBUNTU_LATEST}
 X86_DISTROS := ubuntu@${UBUNTU_LATEST} ubuntu
 ALIAS_DISTROS := ubuntu allcross fedora
-ALLCROSS_DISTROS := allcross@${UBUNTU_LATEST} allcross
+ALLCROSS_DISTROS := allcross@sid allcross
 ALL_ARCHES := alpha arm arm64 i686 m68k mips mips64 riscv s390 sh sparc x86_64
 SUBARCHES := ppc64le ppc64 ppc
 

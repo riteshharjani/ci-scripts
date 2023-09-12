@@ -102,7 +102,7 @@ function get_default_version()
 
     case "$distro" in
         ubuntu) latest="$UBUNTU_LATEST" ;;
-        allcross) latest="$UBUNTU_LATEST" ;;
+        allcross) latest="sid" ;;
         fedora) latest="$FEDORA_LATEST" ;;
     esac
 
