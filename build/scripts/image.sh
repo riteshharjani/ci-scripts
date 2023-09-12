@@ -21,7 +21,7 @@ from="docker.io/$distro:$version"
 
 if [[ "$distro" == "docs" ]]; then
     from="docker.io/ubuntu:$version"
-elif [[ "$distro" == "ubuntu-allcross" ]]; then
+elif [[ "$distro" == "allcross" ]]; then
     from="linuxppc/build:ubuntu-$version"
 elif [[ "$distro" == "korg" ]]; then
     # Use an older distro for the 5.x toolchains.

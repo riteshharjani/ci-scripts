@@ -21,8 +21,8 @@ KORG_DISTROS := korg@13.1.0 korg@12.3.0 korg@12.2.0 korg@12.1.0 korg@11.3.0 korg
 ALL_DISTROS := ${UBUNTU_DISTROS} ${KORG_DISTROS} ${FEDORA_DISTROS}
 DOCS_DISTRO := docs@${UBUNTU_LATEST}
 X86_DISTROS := ubuntu@${UBUNTU_LATEST} ubuntu
-ALIAS_DISTROS := ubuntu ubuntu-allcross fedora
-ALLCROSS_DISTROS := ubuntu-allcross@${UBUNTU_LATEST} ubuntu-allcross
+ALIAS_DISTROS := ubuntu allcross fedora
+ALLCROSS_DISTROS := allcross@${UBUNTU_LATEST} allcross
 ALL_ARCHES := alpha arm arm64 i686 m68k mips mips64 riscv s390 sh sparc x86_64
 SUBARCHES := ppc64le ppc64 ppc
 
