@@ -89,7 +89,7 @@ function get_output_dir()
         d="$d@$version"
     fi
 
-    d=$(realpath $d)
+    d=$(realpath -q $d)
     echo "$d"
 
     return 0
