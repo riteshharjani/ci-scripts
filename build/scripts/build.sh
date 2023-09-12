@@ -139,7 +139,22 @@ fi
 
 if [[ "$task" == "kernel" ]]; then
     if [[ -z "$DEFCONFIG" ]]; then
-        DEFCONFIG="${subarch}_defconfig"
+        case "$subarch" in
+        alpha)  ;&
+        arm64)  ;&
+        riscv)  ;&
+        s390)   DEFCONFIG=defconfig ;;
+        arc)    DEFCONFIG=axs103_smp_defconfig ;;
+        arm)    DEFCONFIG=versatile_defconfig ;;
+        i686)   DEFCONFIG=i386_defconfig ;;
+        m68k)   DEFCONFIG=multi_defconfig ;;
+        mips)   DEFCONFIG=32r6_defconfig ;;
+        mips64) DEFCONFIG=64r6_defconfig ;;
+        parisc) DEFCONFIG=generic-32bit_defconfig ;;
+        sh)     DEFCONFIG=shx3_defconfig ;;
+        sparc)  DEFCONFIG=sparc64_defconfig ;;
+        *)      DEFCONFIG="${subarch}_defconfig" ;;
+        esac
     fi
     cmd+="-e DEFCONFIG=$DEFCONFIG "
 
