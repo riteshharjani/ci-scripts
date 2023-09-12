@@ -145,15 +145,21 @@ def filter_log_warnings(infile, outfile):
     patterns = [t[1] for t in parser.items('patterns', [])]
     patterns = [re.compile(p) for p in patterns]
 
+    def suppress(line):
+        for suppression in suppressions:
+            if suppression in line:
+                return True
+
+        return False
+
     found = False
     while True:
         line = infile.readline()
         if len(line) == 0:
             break
 
-        for suppression in suppressions:
-            if suppression in line:
-                continue
+        if suppress(line):
+            continue
 
         for string in strings:
             if string in line:
