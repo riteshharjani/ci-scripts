@@ -141,6 +141,8 @@ def filter_log_warnings(infile, outfile):
     parser = ConfigParser()
     parser.read_file(open(path))
     suppressions = [t[1] for t in parser.items('suppressions', [])]
+    suppression_patterns = [t[1] for t in parser.items('suppression_patterns', [])]
+    suppression_patterns = [re.compile(p) for p in suppression_patterns]
     strings  = [t[1] for t in parser.items('strings', [])]
     patterns = [t[1] for t in parser.items('patterns', [])]
     patterns = [re.compile(p) for p in patterns]
@@ -148,6 +150,10 @@ def filter_log_warnings(infile, outfile):
     def suppress(line):
         for suppression in suppressions:
             if suppression in line:
+                return True
+
+        for pattern in suppression_patterns:
+            if pattern.search(line):
                 return True
 
         return False
