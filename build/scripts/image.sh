@@ -86,10 +86,6 @@ fi
 
 cmd="$DOCKER build -f $distro/Dockerfile "
 
-if [[ "$distro" != "ubuntu-allcross" ]]; then
-    cmd+="--pull "
-fi
-
 if [[ -n "$http_proxy" ]]; then
     cmd+="--build-arg http_proxy=$http_proxy "
 fi
