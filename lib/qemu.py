@@ -23,7 +23,7 @@ class QemuConfig:
         self.logpath = 'console.log'
         self.quiet = False
         self.net = None
-        self.net_tests = True
+        self.net_tests = False
         self.host_command = 'run'
         self.gdb = None
         self.interactive = False
@@ -55,7 +55,7 @@ class QemuConfig:
         self.pexpect_timeout = int(get_env_var('QEMU_PEXPECT_TIMEOUT', self.pexpect_timeout))
         self.logpath = get_env_var('QEMU_CONSOLE_LOG', self.logpath)
         self.quiet = get_env_var('QEMU_QUIET', self.quiet)
-        self.net_tests = get_env_var('QEMU_NET_TESTS', self.net_tests) != '0'
+        self.net_tests = get_env_var('QEMU_NET_TESTS', self.net_tests) == '1'
         self.host_command = get_env_var('QEMU_HOST_COMMAND', self.host_command)
         self.expected_release = get_expected_release()
         self.vmlinux = get_vmlinux()
