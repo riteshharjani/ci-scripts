@@ -14,6 +14,7 @@ class QemuConfig:
         self.cpu = None
         self.mem = None
         self.accel = 'tcg'
+        self.use_vof = False
         self.smp = None
         self.cloud_image = None
         self.host_mounts = []
@@ -43,6 +44,7 @@ class QemuConfig:
 
     def configure_from_env(self):
         self.accel = get_env_var('ACCEL', self.accel)
+        self.use_vof = get_env_var('QEMU_VOF', self.use_vof)
         self.cpu = get_env_var('CPU', self.cpu)
         self.smp = get_env_var('SMP', self.smp)
         self.mem = get_env_var('QEMU_MEM_SIZE', self.mem)
@@ -81,6 +83,9 @@ class QemuConfig:
                 if self.cpu != 'host':
                     self.machine_caps += ['max-cpu-compat=%s' % self.cpu.lower()]
                 self.cpu = None
+
+            if self.use_vof:
+                self.machine_caps += ['x-vof=on']
 
         if self.cpuinfo is None:
             if self.machine_is('pseries'):
