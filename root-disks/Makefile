@@ -7,6 +7,7 @@ IMAGES += ubuntu21.10-cloudimg-ppc64el.qcow2
 IMAGES += ubuntu22.04-cloudimg-ppc64el.qcow2
 IMAGES += fedora34-cloudimg-ppc64le.qcow2
 IMAGES += fedora36-cloudimg-ppc64le.qcow2
+IMAGES += fedora39-cloudimg-ppc64le.qcow2
 IMAGES += debian-sid-powerpc.qcow2
 
 build: prepare cloud-init-user-data.img
@@ -72,16 +73,35 @@ ubuntu22.04-cloudimg-ppc64el.qcow2:
 	sha256sum $@ > $@.sum
 
 define wget_fedora
+	$(call wget,$(1),"https://download.fedoraproject.org/pub/fedora-secondary/releases/$(2)/Cloud/ppc64le/images/$(3)")
+endef
+
+define wget_fedora_old
 	$(call wget,$(1),"https://archives.fedoraproject.org/pub/archive/fedora-secondary/releases/$(2)/Cloud/ppc64le/images/$(3)")
 endef
 
 fedora34-cloudimg-ppc64le.qcow2:
-	$(call wget_fedora,$@,34,Fedora-Cloud-Base-34-1.2.ppc64le.qcow2)
+	$(call wget_fedora_old,$@,34,Fedora-Cloud-Base-34-1.2.ppc64le.qcow2)
 	chmod a-w $@
 	sha256sum $@ > $@.sum
 
 fedora36-cloudimg-ppc64le.qcow2:
-	$(call wget_fedora,$@,36,Fedora-Cloud-Base-36-1.5.ppc64le.qcow2)
+	$(call wget_fedora_old,$@,36,Fedora-Cloud-Base-36-1.5.ppc64le.qcow2)
+	chmod a-w $@
+	sha256sum $@ > $@.sum
+
+fedora37-cloudimg-ppc64le.qcow2:
+	$(call wget_fedora,$@,37,Fedora-Cloud-Base-37-1.7.ppc64le.qcow2)
+	chmod a-w $@
+	sha256sum $@ > $@.sum
+
+fedora38-cloudimg-ppc64le.qcow2:
+	$(call wget_fedora,$@,38,Fedora-Cloud-Base-38-1.6.ppc64le.qcow2)
+	chmod a-w $@
+	sha256sum $@ > $@.sum
+
+fedora39-cloudimg-ppc64le.qcow2:
+	$(call wget_fedora,$@,39,Fedora-Cloud-Base-39-1.5.ppc64le.qcow2)
 	chmod a-w $@
 	sha256sum $@ > $@.sum
 
