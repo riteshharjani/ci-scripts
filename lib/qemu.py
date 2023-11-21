@@ -237,8 +237,11 @@ class QemuConfig:
         
         if 'ubuntu' in self.cloud_image:
             self.cmdline.insert(0, f'root=/dev/vd{cloud_drive}1')
-        elif 'fedora' in self.cloud_image or 'debian' in self.cloud_image:
+        elif 'fedora34' in self.cloud_image or 'debian' in self.cloud_image:
             self.cmdline.insert(0, f'root=/dev/vd{cloud_drive}2')
+        elif 'fedora' in self.cloud_image:
+            self.cmdline.insert(0, 'systemd.mask=hcn-init.service systemd.hostname=fedora')
+            self.cmdline.insert(0, f'root=/dev/vd{cloud_drive}5 rootfstype=btrfs rootflags=subvol=root')
 
     def cmd(self):
         logging.info('Using qemu version %s.%s "%s"' % get_qemu_version(self.qemu_path))
