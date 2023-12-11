@@ -50,9 +50,9 @@ case "$task" in
         cd "$output_dir"
         if [[ -d install ]]; then
             mv install selftests
-            tar -cJf selftests.tar.xz selftests
+            tar -czf selftests.tar.gz selftests
         fi
-        find . -not -path "./selftests.tar.xz" -delete
+        find . -not -path "./selftests.tar.gz" -delete
         ;;
     *)
         (set -x ; rm -rf "$output_dir")
