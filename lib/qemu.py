@@ -46,6 +46,7 @@ class QemuConfig:
         self.expected_release = None
         self.vmlinux = None
         self.cpuinfo = None
+        self.bios = None
 
         # Detect root disks if we're called from scripts/boot/qemu-xxx
         base = os.path.dirname(sys.argv[0])
@@ -88,6 +89,7 @@ class QemuConfig:
         parser.add_argument('--kernel-path', type=str, help='Path to kernel (vmlinux)')
         parser.add_argument('--modules-path', type=str, help='Path to modules tarball')
         parser.add_argument('--selftests-path', type=str, help='Path to selftests tarball')
+        parser.add_argument('--bios', type=str, help='BIOS option for qemu')
         parser.add_argument('--cap', dest='machine_caps',  type=str, default=[], action='append', help='Machine caps')
         parser.add_argument('--qemu-path', dest='qemu_path', type=str, help='Path to qemu bin directory')
         parser.add_argument('--root-disk-path', dest='root_disk_path', type=str, help='Path to root disk directory')
@@ -156,6 +158,7 @@ class QemuConfig:
         self.net_tests = args.net_tests
         self.host_mounts.extend(args.mounts)
         self.machine_caps.extend(args.machine_caps)
+        self.bios = args.bios
 
         def make_callback(func, arg_str):
             if arg_str:
@@ -425,6 +428,10 @@ class QemuConfig:
         if self.cpu is not None:
             l.append('-cpu')
             l.append(self.cpu)
+
+        if self.bios is not None:
+            l.append('-bios')
+            l.append(self.bios)
 
         if len(self.cmdline):
             l.append('-append')
