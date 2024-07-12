@@ -60,6 +60,7 @@ class QemuConfig:
         self.expected_release = get_expected_release()
         self.vmlinux = get_vmlinux()
         self.modules_tarball = get_modules_tarball()
+        self.selftests_tarball = get_selftests_tarball()
         self.cpuinfo = None
 
     def configure_from_args(self, orig_args):
@@ -85,6 +86,7 @@ class QemuConfig:
         parser.add_argument('--release-path', type=str, help='Path to kernel.release')
         parser.add_argument('--kernel-path', type=str, help='Path to kernel (vmlinux)')
         parser.add_argument('--modules-path', type=str, help='Path to modules tarball')
+        parser.add_argument('--selftests-path', type=str, help='Path to selftests tarball')
         parser.add_argument('--cap', dest='machine_caps',  type=str, default=[], action='append', help='Machine caps')
         parser.add_argument('--qemu-path', dest='qemu_path', type=str, help='Path to qemu bin directory')
         parser.add_argument('--root-disk-path', dest='root_disk_path', type=str, help='Path to root disk directory')
@@ -141,6 +143,9 @@ class QemuConfig:
 
         if args.root_disk_path:
             self.root_disk_path = args.root_disk_path
+
+        if args.selftests_path:
+            self.selftests_tarball = args.selftests_path
 
         self.compat_rootfs = args.compat_rootfs
         self.use_vof = args.use_vof
@@ -300,6 +305,9 @@ class QemuConfig:
 
         if self.modules_tarball:
             self.modules_drive = self.add_drive(f'file={self.modules_tarball},format=raw,readonly=on')
+
+        if self.selftests_tarball:
+            self.selftests_drive = self.add_drive(f'file={self.selftests_tarball},format=raw,readonly=on')
 
     def add_drive(self, args):
         drive_id = self.next_drive
@@ -516,6 +524,11 @@ def qemu_main(qconf):
     if qconf.modules_tarball:
         p.cmd('mkdir -p /lib/modules')
         p.send(f'cd /lib/modules; cat /dev/vd{qconf.modules_drive} | zcat | tar --strip-components=2 -xf -; cd -')
+        p.expect_prompt(timeout=boot_timeout)
+
+    if qconf.selftests_tarball:
+        p.cmd('mkdir -p /var/tmp/selftests')
+        p.send(f'cd /var/tmp/selftests; cat /dev/vd{qconf.selftests_drive} | zcat | tar --strip-components=1 -xf -; cd -')
         p.expect_prompt(timeout=boot_timeout)
 
     if qconf.net_tests:

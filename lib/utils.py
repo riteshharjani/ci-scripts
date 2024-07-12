@@ -93,6 +93,9 @@ def get_modules_tarball():
     return get_tarball('modules')
 
 
+def get_selftests_tarball():
+    return get_tarball('selftests')
+
 def read_expected_release(path):
     expected_release = open(path).read().strip()
     return expected_release
