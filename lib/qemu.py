@@ -6,6 +6,7 @@ import subprocess
 import logging
 from utils import *
 from pexpect_utils import PexpectHelper, standard_boot, ping_test, wget_test
+import qemu_callbacks
 
 
 class QemuConfig:
