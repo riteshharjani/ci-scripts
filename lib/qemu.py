@@ -91,6 +91,7 @@ class QemuConfig:
         parser.add_argument('--qemu-path', dest='qemu_path', type=str, help='Path to qemu bin directory')
         parser.add_argument('--root-disk-path', dest='root_disk_path', type=str, help='Path to root disk directory')
         parser.add_argument('--callback', metavar='callback', dest='callbacks', type=str, default=[], action='append', help='Callback to run')
+        parser.add_argument('-x', metavar='shell command', dest='shell_commands', type=str, default=[], action='append', help='Shell command to run')
         args = parser.parse_args(orig_args)
 
         if args.gdb:
@@ -173,6 +174,10 @@ class QemuConfig:
 
             func = getattr(qemu_callbacks, name)
             self.callbacks.append(make_callback(func, arg_str))
+
+        func = getattr(qemu_callbacks, 'sh')
+        for cmd in args.shell_commands:
+            self.callbacks.append(make_callback(func, cmd))
 
 
     def apply_defaults(self):
