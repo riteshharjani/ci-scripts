@@ -37,6 +37,7 @@ class QemuConfig:
         self.callback = None
         self.extra_args = []
         self.qemu_path = None
+        self.qemu_cmd = None
         self.login = False
         self.prompt = None
         self.user = 'root'
@@ -77,6 +78,7 @@ class QemuConfig:
         parser.add_argument('--kernel-path', type=str, help='Path to kernel (vmlinux)')
         parser.add_argument('--modules-path', type=str, help='Path to modules tarball')
         parser.add_argument('--cap', dest='machine_caps',  type=str, default=[], action='append', help='Machine caps')
+        parser.add_argument('--qemu-path', dest='qemu_path', type=str, help='Path to qemu bin directory')
         args = parser.parse_args(orig_args)
 
         if args.gdb:
@@ -125,6 +127,9 @@ class QemuConfig:
         if args.modules_path:
             self.modules_tarball = args.modules_path
             
+        if args.qemu_path:
+            self.qemu_path = args.qemu_path
+
         self.compat_rootfs = args.compat_rootfs
         self.use_vof = args.use_vof
         self.quiet = args.quiet
@@ -171,13 +176,14 @@ class QemuConfig:
                 if self.cpu:
                     self.cpuinfo.insert(0, f'cpu\\s+: {self.cpu}')
 
-        if self.qemu_path is None:
+        if self.qemu_cmd is None:
             if self.machine_is('pseries') or self.machine_is('powernv'):
-                self.qemu_path = 'qemu-system-ppc64'
+                self.qemu_cmd = 'qemu-system-ppc64'
             else:
-                self.qemu_path = 'qemu-system-ppc'
+                self.qemu_cmd = 'qemu-system-ppc'
 
-        self.qemu_path = get_qemu(self.qemu_path)
+        if self.qemu_path:
+            self.qemu_cmd = f'{self.qemu_path}/{self.qemu_cmd}'
 
         if self.smp is None:
             if self.machine_is('mac99'): # Doesn't support SMP
@@ -240,7 +246,7 @@ class QemuConfig:
             self.prompt = "/ #"
 
         if self.initrd is None and len(self.drives) == 0 and self.cloud_image is None:
-            if self.compat_rootfs or self.qemu_path.endswith('qemu-system-ppc'):
+            if self.compat_rootfs or self.qemu_cmd.endswith('qemu-system-ppc'):
                 subarch = 'ppc'
             elif get_endian(self.vmlinux) == 'little':
                 subarch = 'ppc64le'
@@ -338,14 +344,14 @@ class QemuConfig:
         self.machine_caps += ['cap-ccf-assist=off']
 
     def cmd(self):
-        logging.info('Using qemu version %s.%s "%s"' % get_qemu_version(self.qemu_path))
+        logging.info('Using qemu version %s.%s "%s"' % get_qemu_version(self.qemu_cmd))
 
         machine = self.machine
         if len(self.machine_caps):
             machine = ','.join([machine] + self.machine_caps)
 
         l = [
-            self.qemu_path,
+            self.qemu_cmd,
             '-nographic',
             '-vga', 'none',
             '-M', machine,
@@ -385,17 +391,6 @@ def qemu_monitor_shutdown(p):
     p.send('\x01c') # invoke qemu monitor
     p.expect(r'\(qemu\)')
     p.send('quit')
-
-
-def get_qemu(name='qemu-system-ppc64'):
-    # This looks for QEMU_SYSTEM_PPC64 or QEMU_SYSTEM_PPC in the environment
-    qemu = get_env_var(name.upper().replace('-', '_'))
-    if qemu is None:
-        # Defer to $PATH search
-        qemu = name
-
-    logging.debug(f'Using qemu {qemu} for {name}')
-    return qemu
 
 
 def get_root_disk_path():

@@ -9,7 +9,6 @@
 # $ ~/src/ci-scripts/scripts/boot/qemu-ppc64e
 #
 # Optional:
-# export QEMU_SYSTEM_PPC64=~/src/qemu/ppc64-softmmu/qemu-system-ppc64
 # export ROOT_DISK_PATH=~/some/directory
 #
 # Expects ROOT_DISK_PATH to contain either:
@@ -34,7 +33,7 @@ def main():
     qconf.cpu = 'e5500'
     qconf.configure_from_env()
     qconf.configure_from_args(sys.argv[1:])
-    qconf.qemu_path = 'qemu-system-ppc64'
+    qconf.qemu_cmd = 'qemu-system-ppc64'
     qconf.mem = '4G'
     qconf.smp = 2
 

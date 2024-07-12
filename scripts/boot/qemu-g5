@@ -11,7 +11,6 @@
 # $ ~/src/ci-scripts/scripts/boot/qemu-g5
 #
 # Optional:
-# export QEMU_SYSTEM_PPC64=~/src/qemu/ppc64-softmmu/qemu-system-ppc64
 # export ROOT_DISK_PATH=~/some/directory
 # Expects ppc64-rootfs.cpio.gz in ROOT_DISK_PATH
 
@@ -30,7 +29,7 @@ def main():
     qconf.configure_from_env()
     qconf.configure_from_args(sys.argv[1:])
     qconf.machine_caps += ['via=pmu']
-    qconf.qemu_path = 'qemu-system-ppc64'
+    qconf.qemu_cmd = 'qemu-system-ppc64'
 
     qconf.apply_defaults()
 

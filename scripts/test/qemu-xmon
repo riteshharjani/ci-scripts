@@ -58,7 +58,7 @@ def test(name, cpu, machine):
     qconf.callback = test_xmon
     qconf.apply_defaults()
 
-    if cpu == 'POWER10' and not qemu_supports_p10(qconf.qemu_path):
+    if cpu == 'POWER10' and not qemu_supports_p10(qconf.qemu_cmd):
         return None
 
     return qemu_main(qconf)
