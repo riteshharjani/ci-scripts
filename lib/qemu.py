@@ -45,6 +45,7 @@ class QemuConfig:
         self.password = None
         self.expected_release = None
         self.vmlinux = None
+        self.cpuinfo = None
 
         # Detect root disks if we're called from scripts/boot/qemu-xxx
         base = os.path.dirname(sys.argv[0])
@@ -62,7 +63,6 @@ class QemuConfig:
         self.vmlinux = get_vmlinux()
         self.modules_tarball = get_modules_tarball()
         self.selftests_tarball = get_selftests_tarball()
-        self.cpuinfo = None
 
     def configure_from_args(self, orig_args):
         parser = argparse.ArgumentParser()
