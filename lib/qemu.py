@@ -42,6 +42,7 @@ class QemuConfig:
         self.user = 'root'
         self.password = None
         self.expected_release = None
+        self.vmlinux = None
 
     def machine_is(self, needle):
         return self.machine.startswith(needle)
@@ -72,6 +73,7 @@ class QemuConfig:
         parser.add_argument('--mount-cmd', dest='mount_command',  type=str, help="Command to run in mount point (default 'run')")
         parser.add_argument('--cmdline', type=str, help='Kernel command line arguments')
         parser.add_argument('--release-path', type=str, help='Path to kernel.release')
+        parser.add_argument('--kernel-path', type=str, help='Path to kernel (vmlinux)')
         args = parser.parse_args(orig_args)
 
         if args.gdb:
@@ -114,6 +116,9 @@ class QemuConfig:
         if args.release_path:
             self.expected_release = read_expected_release(args.release_path)
 
+        if args.kernel_path:
+            self.vmlinux = args.kernel_path
+
         self.compat_rootfs = args.compat_rootfs
         self.use_vof = args.use_vof
         self.quiet = args.quiet
@@ -123,6 +128,10 @@ class QemuConfig:
     def apply_defaults(self):
         if not self.expected_release:
             logging.error("Couldn't find kernel.release")
+            return
+            
+        if not self.vmlinux:
+            logging.error("Can't find kernel vmlinux")
             return
             
         if self.machine_is('pseries'):

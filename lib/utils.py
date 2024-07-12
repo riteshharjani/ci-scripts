@@ -67,12 +67,11 @@ def get_vmlinux():
         if os.path.isfile(path):
             return path
 
-    vmlinux = get_env_var('VMLINUX_PATH', 'vmlinux')
-    if not os.path.isfile(vmlinux):
-        logging.error("Can't read kernel 'vmlinux'! Try setting VMLINUX_PATH")
-        return None
+    path = 'vmlinux'
+    if os.path.isfile(path):
+        return path
 
-    return vmlinux
+    return None
 
 
 def read_expected_release(path):

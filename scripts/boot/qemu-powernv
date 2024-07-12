@@ -4,10 +4,6 @@
 # $ make
 # $ ~/src/ci-scripts/scripts/boot/qemu-powernv
 #
-# Or:
-#
-# export VMLINUX_PATH=~/src/linux/vmlinux
-#
 # Optional:
 # export QEMU_SYSTEM_PPC64=~/src/qemu/ppc64-softmmu/qemu-system-ppc64
 #
