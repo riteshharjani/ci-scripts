@@ -49,9 +49,6 @@ class QemuConfig:
         self.expected_release = get_expected_release()
         self.vmlinux = get_vmlinux()
         self.cpuinfo = None
-        val = get_env_var('LINUX_CMDLINE', None)
-        if val:
-            self.cmdline.append(val)
 
     def configure_from_args(self, orig_args):
         parser = argparse.ArgumentParser()
@@ -72,6 +69,7 @@ class QemuConfig:
         parser.add_argument('--pexpect-timeout', type=int, help="pexepect timeout in seconds (default 60)")
         parser.add_argument('--mount', dest='mounts',  type=str, default=[], action='append', help='Host mount points')
         parser.add_argument('--mount-cmd', dest='mount_command',  type=str, help="Command to run in mount point (default 'run')")
+        parser.add_argument('--cmdline', type=str, help='Kernel command line arguments')
 
         args = parser.parse_args(orig_args)
 
@@ -108,6 +106,9 @@ class QemuConfig:
 
         if args.mount_command:
             self.host_command = args.mount_command
+
+        if args.cmdline:
+            self.cmdline.append(args.cmdline)
 
         self.compat_rootfs = args.compat_rootfs
         self.use_vof = args.use_vof
