@@ -45,6 +45,14 @@ class QemuConfig:
         self.expected_release = None
         self.vmlinux = None
 
+        # Detect root disks if we're called from scripts/boot/qemu-xxx
+        base = os.path.dirname(sys.argv[0])
+        path = f'{base}/../../root-disks'
+        if os.path.isdir(path):
+            self.root_disk_path = path
+        else:
+            self.root_disk_path = None
+
     def machine_is(self, needle):
         return self.machine.startswith(needle)
 
@@ -79,6 +87,7 @@ class QemuConfig:
         parser.add_argument('--modules-path', type=str, help='Path to modules tarball')
         parser.add_argument('--cap', dest='machine_caps',  type=str, default=[], action='append', help='Machine caps')
         parser.add_argument('--qemu-path', dest='qemu_path', type=str, help='Path to qemu bin directory')
+        parser.add_argument('--root-disk-path', dest='root_disk_path', type=str, help='Path to root disk directory')
         args = parser.parse_args(orig_args)
 
         if args.gdb:
@@ -130,6 +139,9 @@ class QemuConfig:
         if args.qemu_path:
             self.qemu_path = args.qemu_path
 
+        if args.root_disk_path:
+            self.root_disk_path = args.root_disk_path
+
         self.compat_rootfs = args.compat_rootfs
         self.use_vof = args.use_vof
         self.quiet = args.quiet
@@ -145,7 +157,11 @@ class QemuConfig:
         if not self.vmlinux:
             logging.error("Can't find kernel vmlinux")
             return
-            
+
+        if not self.root_disk_path:
+            logging.error("Couldn't locate root disks")
+            return
+ 
         if self.machine_is('pseries'):
             if self.accel == 'tcg':
                 self.machine_caps += ['cap-htm=off']
@@ -304,7 +320,7 @@ class QemuConfig:
         if self.cloud_image is None:
             return
 
-        rdpath = get_root_disk_path()
+        rdpath = self.root_disk_path
         img_path = f'{rdpath}/{self.cloud_image}'
 
         if self.cloud_image.endswith('.qcow2'):
@@ -366,7 +382,7 @@ class QemuConfig:
 
         if self.initrd:
             l.append('-initrd')
-            l.append(get_root_disk(self.initrd))
+            l.append(os.path.join(self.root_disk_path, self.initrd))
 
         if len(self.drives):
             l.extend(self.drives)
@@ -391,26 +407,6 @@ def qemu_monitor_shutdown(p):
     p.send('\x01c') # invoke qemu monitor
     p.expect(r'\(qemu\)')
     p.send('quit')
-
-
-def get_root_disk_path():
-    path = get_env_var('ROOT_DISK_PATH', None)
-    if path is not None:
-        return path
-
-    base = os.path.dirname(sys.argv[0])
-    # Assumes we're called from scripts/boot/qemu-xxx
-    path = f'{base}/../../root-disks'
-    if os.path.isdir(path):
-        return path
-
-    return ''
-
-
-def get_root_disk(fname):
-    val = os.path.join(get_root_disk_path(), fname)
-    logging.debug(f'Using rootfs {val}')
-    return val
 
 
 def get_qemu_version(emulator):
