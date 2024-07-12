@@ -74,6 +74,7 @@ class QemuConfig:
         parser.add_argument('--cmdline', type=str, help='Kernel command line arguments')
         parser.add_argument('--release-path', type=str, help='Path to kernel.release')
         parser.add_argument('--kernel-path', type=str, help='Path to kernel (vmlinux)')
+        parser.add_argument('--cap', dest='machine_caps',  type=str, default=[], action='append', help='Machine caps')
         args = parser.parse_args(orig_args)
 
         if args.gdb:
@@ -124,6 +125,7 @@ class QemuConfig:
         self.quiet = args.quiet
         self.net_tests = args.net_tests
         self.host_mounts.extend(args.mounts)
+        self.machine_caps.extend(args.machine_caps)
 
     def apply_defaults(self):
         if not self.expected_release:
