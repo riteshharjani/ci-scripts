@@ -1,5 +1,3 @@
 #!/bin/bash
 
-export CLOUD_IMAGE=fedora36-cloudimg-ppc64le.qcow2
-
-exec "$(dirname "$0")"/qemu-pseries --cpu POWER10 $@
+exec "$(dirname "$0")"/qemu-pseries --cpu POWER10 --cloud-image fedora36-cloudimg-ppc64le.qcow2 $@

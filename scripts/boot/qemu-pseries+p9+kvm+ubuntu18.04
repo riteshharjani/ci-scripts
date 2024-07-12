@@ -1,5 +1,3 @@
 #!/bin/bash
 
-export CLOUD_IMAGE=ubuntu18.04-cloudimg-ppc64el.qcow2
-
-exec "$(dirname "$0")"/qemu-pseries --accel kvm --cpu POWER9 $@
+exec "$(dirname "$0")"/qemu-pseries --accel kvm --cpu POWER9 --cloud-image ubuntu18.04-cloudimg-ppc64el.qcow2 $@

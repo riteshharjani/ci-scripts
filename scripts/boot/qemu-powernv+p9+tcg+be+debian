@@ -1,5 +1,3 @@
 #!/bin/bash
 
-export CLOUD_IMAGE=debian-sid-powerpc.qcow2
-
-exec "$(dirname "$0")"/qemu-powernv --cpu POWER9 $@
+exec "$(dirname "$0")"/qemu-powernv --cpu POWER9 --cloud-image debian-sid-powerpc.qcow2 $@

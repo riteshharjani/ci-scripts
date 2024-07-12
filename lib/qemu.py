@@ -50,7 +50,6 @@ class QemuConfig:
         self.smp = get_env_var('SMP', self.smp)
         self.mem = get_env_var('QEMU_MEM_SIZE', self.mem)
         self.initrd = get_env_var('QEMU_INITRD', self.initrd)
-        self.cloud_image = get_env_var('CLOUD_IMAGE', self.cloud_image)
         self.compat_rootfs = get_env_var('COMPAT_USERSPACE', self.compat_rootfs)
         self.pexpect_timeout = int(get_env_var('QEMU_PEXPECT_TIMEOUT', self.pexpect_timeout))
         self.logpath = get_env_var('QEMU_CONSOLE_LOG', self.logpath)
@@ -76,6 +75,7 @@ class QemuConfig:
         parser.add_argument('--interactive', action='store_true', help='Run interactively')
         parser.add_argument('--accel', type=str, help="Accelerator to use, 'tcg' (default) or 'kvm'")
         parser.add_argument('--cpu', type=str, help="CPU to use")
+        parser.add_argument('--cloud-image', type=str, help="Cloud image to use")
 
         args = parser.parse_args(orig_args)
 
@@ -91,6 +91,9 @@ class QemuConfig:
 
         if args.cpu:
             self.cpu = args.cpu
+
+        if args.cloud_image:
+            self.cloud_image = args.cloud_image
 
     def apply_defaults(self):
         if self.machine_is('pseries'):

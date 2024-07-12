@@ -1,5 +1,3 @@
 #!/bin/bash
 
-export CLOUD_IMAGE=ubuntu16.04-cloudimg-powerpc.qcow2
-
-exec "$(dirname "$0")"/qemu-pseries --cpu POWER9 $@
+exec "$(dirname "$0")"/qemu-pseries --cpu POWER9 --cloud-image ubuntu16.04-cloudimg-powerpc.qcow2 $@
