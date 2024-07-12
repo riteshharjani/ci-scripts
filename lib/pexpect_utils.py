@@ -99,10 +99,12 @@ def standard_boot(p, login=False, user='root', password=None, timeout=-1):
     logging.info("Waiting for kernel to boot")
     i = p.expect([p.prompt, "login:", "Freeing unused kernel "], timeout=timeout)
 
-    if i == 0:
+    if i == 0 and not login:
         # We booted straight to a prompt, we're done
-        pass
-    elif login:
+        logging.info("Booted direct to shell prompt")
+        return
+
+    if login:
         if i != 1:
             logging.info("Kernel came up, waiting for login ...")
             p.expect("login:", timeout=timeout)
