@@ -48,7 +48,6 @@ class QemuConfig:
     def configure_from_env(self):
         self.pexpect_timeout = int(get_env_var('QEMU_PEXPECT_TIMEOUT', self.pexpect_timeout))
         self.logpath = get_env_var('QEMU_CONSOLE_LOG', self.logpath)
-        self.net_tests = get_env_var('QEMU_NET_TESTS', self.net_tests) == '1'
         self.host_command = get_env_var('QEMU_HOST_COMMAND', self.host_command)
         self.expected_release = get_expected_release()
         self.vmlinux = get_vmlinux()
@@ -76,6 +75,7 @@ class QemuConfig:
         parser.add_argument('--compat-rootfs', action='store_true', help="Use compat rootfs (if available)")
         parser.add_argument('--use-vof', action='store_true', help="Use pseries vof")
         parser.add_argument('--quiet', action='store_true', help="Reduce output")
+        parser.add_argument('--net-tests', action='store_true', help="Run network tests")
 
         args = parser.parse_args(orig_args)
 
@@ -107,6 +107,7 @@ class QemuConfig:
         self.compat_rootfs = args.compat_rootfs
         self.use_vof = args.use_vof
         self.quiet = args.quiet
+        self.net_tests = args.net_tests
 
     def apply_defaults(self):
         if self.machine_is('pseries'):
