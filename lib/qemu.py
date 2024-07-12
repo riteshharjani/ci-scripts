@@ -1,3 +1,4 @@
+import argparse
 import atexit
 import os
 import sys
@@ -70,12 +71,19 @@ class QemuConfig:
             self.host_mounts.extend(val.split(':'))
 
 
-    def configure_from_args(self, args):
-        if '--gdb' in args:
+    def configure_from_args(self, orig_args):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('-v', dest='verbose', action='store_true', help='Verbose logging')
+        parser.add_argument('--gdb', action='store_true', help='Wait for gdb connection')
+        parser.add_argument('--interactive', action='store_true', help='Run interactively')
+
+        args = parser.parse_args(orig_args)
+
+        if args.gdb:
             self.extra_args += ['-S', '-s']
             self.pexpect_timeout = 0
 
-        if '--interactive' in args:
+        if args.interactive:
             self.interactive = True
 
     def apply_defaults(self):
