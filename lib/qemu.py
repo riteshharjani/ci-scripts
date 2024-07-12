@@ -46,7 +46,6 @@ class QemuConfig:
         return self.machine.startswith(needle)
 
     def configure_from_env(self):
-        self.use_vof = get_env_var('QEMU_VOF', self.use_vof)
         self.initrd = get_env_var('QEMU_INITRD', self.initrd)
         self.pexpect_timeout = int(get_env_var('QEMU_PEXPECT_TIMEOUT', self.pexpect_timeout))
         self.logpath = get_env_var('QEMU_CONSOLE_LOG', self.logpath)
@@ -76,6 +75,7 @@ class QemuConfig:
         parser.add_argument('--mem-size', type=str, help="Memory config")
         parser.add_argument('--cloud-image', type=str, help="Cloud image to use")
         parser.add_argument('--compat-rootfs', action='store_true', help="Use compat rootfs (if available)")
+        parser.add_argument('--use-vof', action='store_true', help="Use pseries vof")
 
         args = parser.parse_args(orig_args)
 
@@ -102,6 +102,7 @@ class QemuConfig:
             self.cloud_image = args.cloud_image
 
         self.compat_rootfs = args.compat_rootfs
+        self.use_vof = args.use_vof
 
     def apply_defaults(self):
         if self.machine_is('pseries'):
