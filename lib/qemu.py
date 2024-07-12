@@ -90,6 +90,7 @@ class QemuConfig:
         parser.add_argument('--cap', dest='machine_caps',  type=str, default=[], action='append', help='Machine caps')
         parser.add_argument('--qemu-path', dest='qemu_path', type=str, help='Path to qemu bin directory')
         parser.add_argument('--root-disk-path', dest='root_disk_path', type=str, help='Path to root disk directory')
+        parser.add_argument('--callback', metavar='callback', dest='callbacks', type=str, default=[], action='append', help='Callback to run')
         args = parser.parse_args(orig_args)
 
         if args.gdb:
@@ -153,6 +154,26 @@ class QemuConfig:
         self.net_tests = args.net_tests
         self.host_mounts.extend(args.mounts)
         self.machine_caps.extend(args.machine_caps)
+
+        def make_callback(func, arg_str):
+            if arg_str:
+                return lambda qconf, p: func(qconf, p, arg_str)
+            else:
+                return func
+
+        for cb in args.callbacks:
+            # Callbacks can take args, like callback(foo bar)
+            # But the callback just gets a string "foo bar"
+            if '(' in cb:
+                name, arg_str = cb.split('(', 1)
+                arg_str = arg_str[:-1] # Crop trailing )
+            else:
+                name = cb
+                arg_str = None
+
+            func = getattr(qemu_callbacks, name)
+            self.callbacks.append(make_callback(func, arg_str))
+
 
     def apply_defaults(self):
         if not self.expected_release:
