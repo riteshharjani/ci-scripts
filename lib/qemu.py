@@ -48,7 +48,6 @@ class QemuConfig:
     def configure_from_env(self):
         self.use_vof = get_env_var('QEMU_VOF', self.use_vof)
         self.initrd = get_env_var('QEMU_INITRD', self.initrd)
-        self.compat_rootfs = get_env_var('COMPAT_USERSPACE', self.compat_rootfs)
         self.pexpect_timeout = int(get_env_var('QEMU_PEXPECT_TIMEOUT', self.pexpect_timeout))
         self.logpath = get_env_var('QEMU_CONSOLE_LOG', self.logpath)
         self.quiet = get_env_var('QEMU_QUIET', self.quiet)
@@ -76,6 +75,7 @@ class QemuConfig:
         parser.add_argument('--smp', type=str, help="SMP config")
         parser.add_argument('--mem-size', type=str, help="Memory config")
         parser.add_argument('--cloud-image', type=str, help="Cloud image to use")
+        parser.add_argument('--compat-rootfs', action='store_true', help="Use compat rootfs (if available)")
 
         args = parser.parse_args(orig_args)
 
@@ -100,6 +100,8 @@ class QemuConfig:
 
         if args.cloud_image:
             self.cloud_image = args.cloud_image
+
+        self.compat_rootfs = args.compat_rootfs
 
     def apply_defaults(self):
         if self.machine_is('pseries'):

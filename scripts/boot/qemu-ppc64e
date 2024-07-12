@@ -22,7 +22,7 @@
 # or
 #   ppc-rootfs.cpio.gz
 #
-# if COMPAT_USERSPACE is set.
+# if --compat-rootfs is specified.
 
 import logging
 import os, sys
