@@ -50,6 +50,7 @@ class QemuConfig:
     def configure_from_env(self):
         self.expected_release = get_expected_release()
         self.vmlinux = get_vmlinux()
+        self.modules_tarball = get_modules_tarball()
         self.cpuinfo = None
 
     def configure_from_args(self, orig_args):
@@ -74,6 +75,7 @@ class QemuConfig:
         parser.add_argument('--cmdline', type=str, help='Kernel command line arguments')
         parser.add_argument('--release-path', type=str, help='Path to kernel.release')
         parser.add_argument('--kernel-path', type=str, help='Path to kernel (vmlinux)')
+        parser.add_argument('--modules-path', type=str, help='Path to modules tarball')
         parser.add_argument('--cap', dest='machine_caps',  type=str, default=[], action='append', help='Machine caps')
         args = parser.parse_args(orig_args)
 
@@ -120,6 +122,9 @@ class QemuConfig:
         if args.kernel_path:
             self.vmlinux = args.kernel_path
 
+        if args.modules_path:
+            self.modules_tarball = args.modules_path
+            
         self.compat_rootfs = args.compat_rootfs
         self.use_vof = args.use_vof
         self.quiet = args.quiet
@@ -270,6 +275,9 @@ class QemuConfig:
                 standard_boot(p, qconf.login, qconf.user, qconf.password, timeout)
 
             self.boot_func = boot
+
+        if self.modules_tarball:
+            self.modules_drive = self.add_drive(f'file={self.modules_tarball},format=raw,readonly=on')
 
     def add_drive(self, args):
         drive_id = self.next_drive
@@ -513,6 +521,11 @@ def qemu_main(qconf):
         for s in qconf.cpuinfo:
             p.expect(s)
     p.expect_prompt()
+
+    if qconf.modules_tarball:
+        p.cmd('mkdir -p /lib/modules')
+        p.send(f'cd /lib/modules; cat /dev/vd{qconf.modules_drive} | zcat | tar --strip-components=2 -xf -; cd -')
+        p.expect_prompt(timeout=boot_timeout)
 
     if qconf.net_tests:
         qemu_net_setup(p)

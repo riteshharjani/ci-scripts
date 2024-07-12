@@ -74,6 +74,25 @@ def get_vmlinux():
     return None
 
 
+def get_tarball(basename):
+    dirs = ['.']
+    env = get_env_var('KBUILD_OUTPUT', None)
+    if env:
+        dirs.append(env)
+
+    for base in dirs:
+        for suffix in ['gz', 'bz2', 'xz']:
+            name = f'{base}/{basename}.tar.{suffix}'
+            if os.path.isfile(name):
+                return name
+
+    return None
+
+
+def get_modules_tarball():
+    return get_tarball('modules')
+
+
 def read_expected_release(path):
     expected_release = open(path).read().strip()
     return expected_release
