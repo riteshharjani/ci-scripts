@@ -117,12 +117,6 @@ class QemuConfig:
 
         self.qemu_path = get_qemu(self.qemu_path)
 
-        if self.mem is None:
-            if self.machine_is('pseries') or self.machine_is('powernv'):
-                self.mem = '4G'
-            else:
-                self.mem = '1G'
-
         if self.smp is None:
             if self.machine_is('mac99'): # Doesn't support SMP
                 self.smp = 1
@@ -130,6 +124,26 @@ class QemuConfig:
                 self.smp = 2
             else:
                 self.smp = 8
+
+        if self.mem is None:
+            if self.machine_is('pseries'):
+                self.mem = '4G'
+                if type(self.smp) is int and self.smp % 4 == 0:
+                    cpus = int(self.smp / 4)
+                else:
+                    cpus = None
+                    s = ''
+                for i in range(0, 4):
+                    self.extra_args.append(f'-object memory-backend-ram,size=1G,id=m{i}')
+                    if cpus:
+                        first = i * cpus
+                        last  = first + cpus - 1
+                        s = f',cpus={first}-{last}'
+                    self.extra_args.append(f'-numa node,nodeid={i},memdev=m{i}{s}')
+            elif self.machine_is('powernv'):
+                self.mem = '4G'
+            else:
+                self.mem = '1G'
 
         if self.net is None:
             if self.machine_is('pseries'):
