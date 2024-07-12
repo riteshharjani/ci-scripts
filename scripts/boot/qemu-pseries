@@ -7,7 +7,6 @@
 # Or:
 #
 # export VMLINUX_PATH=~/src/linux/vmlinux
-# export KERNEL_RELEASE_PATH=~/src/linux/include/config/kernel.release
 #
 # Optional:
 # export QEMU_SYSTEM_PPC64=~/src/qemu/ppc64-softmmu/qemu-system-ppc64

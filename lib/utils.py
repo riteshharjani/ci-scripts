@@ -69,12 +69,13 @@ def get_vmlinux():
     return vmlinux
 
 
+def read_expected_release(path):
+    expected_release = open(path).read().strip()
+    return expected_release
+
+
 def get_expected_release():
     candidates = []
-    env = os.environ.get('KERNEL_RELEASE_PATH', None)
-    if env:
-        candidates.append(env)
-
     default_path = 'include/config/kernel.release'
     env = os.environ.get('KBUILD_OUTPUT', None)
     if env:
@@ -83,14 +84,9 @@ def get_expected_release():
     candidates.extend([default_path, 'kernel.release'])
     for path in candidates:
         if os.path.isfile(path):
-            break
-    else:
-        logging.error(f"Couldn't find kernel.release, export KERNEL_RELEASE_PATH")
-        return None
+            return read_expected_release(path)
 
-    expected_release = open(path).read().strip()
-    logging.info(f'Looking for kernel version: {expected_release}')
-    return expected_release
+    return None
 
 
 def test_harness(func, name, *args, **kwargs):

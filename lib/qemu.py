@@ -41,6 +41,7 @@ class QemuConfig:
         self.prompt = None
         self.user = 'root'
         self.password = None
+        self.expected_release = None
 
     def machine_is(self, needle):
         return self.machine.startswith(needle)
@@ -70,7 +71,7 @@ class QemuConfig:
         parser.add_argument('--mount', dest='mounts',  type=str, default=[], action='append', help='Host mount points')
         parser.add_argument('--mount-cmd', dest='mount_command',  type=str, help="Command to run in mount point (default 'run')")
         parser.add_argument('--cmdline', type=str, help='Kernel command line arguments')
-
+        parser.add_argument('--release-path', type=str, help='Path to kernel.release')
         args = parser.parse_args(orig_args)
 
         if args.gdb:
@@ -110,6 +111,9 @@ class QemuConfig:
         if args.cmdline:
             self.cmdline.append(args.cmdline)
 
+        if args.release_path:
+            self.expected_release = read_expected_release(args.release_path)
+
         self.compat_rootfs = args.compat_rootfs
         self.use_vof = args.use_vof
         self.quiet = args.quiet
@@ -117,6 +121,10 @@ class QemuConfig:
         self.host_mounts.extend(args.mounts)
 
     def apply_defaults(self):
+        if not self.expected_release:
+            logging.error("Couldn't find kernel.release")
+            return
+            
         if self.machine_is('pseries'):
             if self.accel == 'tcg':
                 self.machine_caps += ['cap-htm=off']
@@ -484,6 +492,7 @@ def qemu_main(qconf):
     p.push_prompt(qconf.prompt)
     qconf.boot_func(p, boot_timeout, qconf)
 
+    logging.info(f'Looking for kernel version: {qconf.expected_release}')
     p.send('echo "booted-revision: `uname -r`"')
     p.expect(f'booted-revision: {qconf.expected_release}')
     p.expect_prompt()
