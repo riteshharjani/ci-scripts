@@ -61,6 +61,12 @@ def check_env_vars(names):
 
 
 def get_vmlinux():
+    env = get_env_var('KBUILD_OUTPUT', None)
+    if env:
+        path = f'{env}/vmlinux'
+        if os.path.isfile(path):
+            return path
+
     vmlinux = get_env_var('VMLINUX_PATH', 'vmlinux')
     if not os.path.isfile(vmlinux):
         logging.error("Can't read kernel 'vmlinux'! Try setting VMLINUX_PATH")
