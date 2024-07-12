@@ -532,7 +532,8 @@ def qemu_main(qconf):
         boot_timeout = pexpect_timeout = None
 
     p = PexpectHelper()
-    p.spawn(cmd, logfile=open(qconf.logpath, 'w'), timeout=pexpect_timeout, quiet=qconf.quiet)
+    logfile = open(qconf.logpath, 'w', encoding='utf-8', errors='ignore')
+    p.spawn(cmd, logfile=logfile, timeout=pexpect_timeout, quiet=qconf.quiet)
 
     p.push_prompt(qconf.prompt)
     qconf.boot_func(p, boot_timeout, qconf)
