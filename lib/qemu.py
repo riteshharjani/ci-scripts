@@ -46,7 +46,6 @@ class QemuConfig:
         return self.machine.startswith(needle)
 
     def configure_from_env(self):
-        self.pexpect_timeout = int(get_env_var('QEMU_PEXPECT_TIMEOUT', self.pexpect_timeout))
         self.host_command = get_env_var('QEMU_HOST_COMMAND', self.host_command)
         self.expected_release = get_expected_release()
         self.vmlinux = get_vmlinux()
@@ -76,12 +75,16 @@ class QemuConfig:
         parser.add_argument('--quiet', action='store_true', help="Reduce output")
         parser.add_argument('--net-tests', action='store_true', help="Run network tests")
         parser.add_argument('--logpath', type=str, help="Alternate log path")
+        parser.add_argument('--pexpect-timeout', type=int, help="pexepect timeout in seconds (default 60)")
 
         args = parser.parse_args(orig_args)
 
         if args.gdb:
             self.extra_args += ['-S', '-s']
             self.pexpect_timeout = 0
+
+        if args.pexpect_timeout:
+            self.pexpect_timeout = args.pexpect_timeout
 
         if args.interactive:
             self.interactive = True
