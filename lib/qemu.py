@@ -466,9 +466,12 @@ def get_host_cpu():
         if words[0] == 'cpu':
             return words[2]
 
+def kvm_present():
+    return os.path.exists('/sys/module/kvm_hv')
+
 
 def kvm_possible(machine, cpu):
-    if machine == 'pseries' and os.path.exists('/sys/module/kvm_hv'):
+    if kvm_present() and machine == 'pseries':
         host_cpu = get_host_cpu()
         if host_cpu == 'POWER8':
             supported = ['POWER8']
