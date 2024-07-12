@@ -54,11 +54,6 @@ class QemuConfig:
         if val:
             self.cmdline.append(val)
 
-        val = get_env_var('QEMU_HOST_MOUNTS', None)
-        if val:
-            self.host_mounts.extend(val.split(':'))
-
-
     def configure_from_args(self, orig_args):
         parser = argparse.ArgumentParser()
         parser.add_argument('-v', dest='verbose', action='store_true', help='Verbose logging')
@@ -76,6 +71,7 @@ class QemuConfig:
         parser.add_argument('--net-tests', action='store_true', help="Run network tests")
         parser.add_argument('--logpath', type=str, help="Alternate log path")
         parser.add_argument('--pexpect-timeout', type=int, help="pexepect timeout in seconds (default 60)")
+        parser.add_argument('--mount', dest='mounts',  type=str, default=[], action='append', help='Host mount points')
 
         args = parser.parse_args(orig_args)
 
@@ -114,6 +110,7 @@ class QemuConfig:
         self.use_vof = args.use_vof
         self.quiet = args.quiet
         self.net_tests = args.net_tests
+        self.host_mounts.extend(args.mounts)
 
     def apply_defaults(self):
         if self.machine_is('pseries'):
@@ -452,7 +449,7 @@ def qemu_main(qconf):
 
     for path in qconf.host_mounts:
         if not os.path.isdir(path):
-            logging.error(f"QEMU_HOST_MOUNTS must point to directories. Not found: '{path}'")
+            logging.error(f"Mount points must point to directories. Not found: '{path}'")
             return False
 
     qconf.prepare_cloud_image()
