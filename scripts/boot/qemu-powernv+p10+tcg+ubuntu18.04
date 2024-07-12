@@ -1,6 +1,5 @@
 #!/bin/bash
 
-export CPU=POWER10
 export CLOUD_IMAGE=ubuntu18.04-cloudimg-ppc64el.qcow2
 
-exec "$(dirname "$0")"/qemu-powernv $@
+exec "$(dirname "$0")"/qemu-powernv --cpu POWER10 $@

@@ -1,6 +1,5 @@
 #!/bin/bash
 
-export CPU=host
 export CLOUD_IMAGE=ubuntu16.04-cloudimg-ppc64el.qcow2
 
-exec "$(dirname "$0")"/qemu-pseries --accel kvm $@
+exec "$(dirname "$0")"/qemu-pseries --accel kvm --cpu host $@

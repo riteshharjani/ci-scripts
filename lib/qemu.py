@@ -47,7 +47,6 @@ class QemuConfig:
 
     def configure_from_env(self):
         self.use_vof = get_env_var('QEMU_VOF', self.use_vof)
-        self.cpu = get_env_var('CPU', self.cpu)
         self.smp = get_env_var('SMP', self.smp)
         self.mem = get_env_var('QEMU_MEM_SIZE', self.mem)
         self.initrd = get_env_var('QEMU_INITRD', self.initrd)
@@ -76,6 +75,7 @@ class QemuConfig:
         parser.add_argument('--gdb', action='store_true', help='Wait for gdb connection')
         parser.add_argument('--interactive', action='store_true', help='Run interactively')
         parser.add_argument('--accel', type=str, help="Accelerator to use, 'tcg' (default) or 'kvm'")
+        parser.add_argument('--cpu', type=str, help="CPU to use")
 
         args = parser.parse_args(orig_args)
 
@@ -88,6 +88,9 @@ class QemuConfig:
 
         if args.accel:
             self.accel = args.accel
+
+        if args.cpu:
+            self.cpu = args.cpu
 
     def apply_defaults(self):
         if self.machine_is('pseries'):

@@ -1,6 +1,5 @@
 #!/bin/bash
 
-export CPU=host
 export CLOUD_IMAGE=fedora39-cloudimg-ppc64le.qcow2
 
-exec "$(dirname "$0")"/qemu-pseries --accel kvm $@
+exec "$(dirname "$0")"/qemu-pseries --accel kvm --cpu host $@

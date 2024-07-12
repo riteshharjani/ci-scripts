@@ -1,6 +1,5 @@
 #!/bin/bash
 
-export CPU=POWER8
 export CLOUD_IMAGE=ubuntu21.04-cloudimg-ppc64el.qcow2
 
-exec "$(dirname "$0")"/qemu-pseries --accel kvm $@
+exec "$(dirname "$0")"/qemu-pseries --accel kvm --cpu POWER8 $@
