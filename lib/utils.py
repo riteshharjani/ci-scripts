@@ -70,9 +70,19 @@ def get_vmlinux():
 
 
 def get_expected_release():
+    candidates = []
     env = os.environ.get('KERNEL_RELEASE_PATH', None)
-    for path in [env, 'include/config/kernel.release', 'kernel.release']:
-        if path and os.path.isfile(path):
+    if env:
+        candidates.append(env)
+
+    default_path = 'include/config/kernel.release'
+    env = os.environ.get('KBUILD_OUTPUT', None)
+    if env:
+        candidates.append(f'{env}/{default_path}')
+
+    candidates.extend([default_path, 'kernel.release'])
+    for path in candidates:
+        if os.path.isfile(path):
             break
     else:
         logging.error(f"Couldn't find kernel.release, export KERNEL_RELEASE_PATH")
