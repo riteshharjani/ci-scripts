@@ -1,7 +1,6 @@
 #!/bin/bash
 
 export CPU=POWER8
-export ACCEL=tcg
 export CLOUD_IMAGE=fedora36-cloudimg-ppc64le.qcow2
 
 exec "$(dirname "$0")"/qemu-powernv $@
