@@ -12,8 +12,6 @@
 # Optional:
 # export QEMU_SYSTEM_PPC64=~/src/qemu/ppc64-softmmu/qemu-system-ppc64
 #
-# export SMP=n                  # Default 2
-#
 # export ROOT_DISK_PATH=~/some/directory
 # Expects ppc64[le]-rootfs.cpio.gz in ROOT_DISK_PATH
 
