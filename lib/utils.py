@@ -7,17 +7,9 @@ import time
 from datetime import datetime
 
 
-def debug_level():
-    if '-v' in sys.argv:
-        return 1
-    if '-vv' in sys.argv:
-        return 2
-    return 0
-
-
 def setup_logging(format='%(levelname)s: %(message)s'):
      level = logging.INFO
-     if debug_level() >= 1:
+     if '-v' in sys.argv:
         level = logging.DEBUG
 
      logging.basicConfig(format=format, level=level, stream=sys.stdout)

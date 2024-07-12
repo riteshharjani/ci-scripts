@@ -2,7 +2,6 @@ import logging
 import pexpect
 import sys
 import time
-from utils import debug_level
 
 
 class PexpectHelper:
