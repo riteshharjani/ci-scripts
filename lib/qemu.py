@@ -46,7 +46,6 @@ class QemuConfig:
         return self.machine.startswith(needle)
 
     def configure_from_env(self):
-        self.host_command = get_env_var('QEMU_HOST_COMMAND', self.host_command)
         self.expected_release = get_expected_release()
         self.vmlinux = get_vmlinux()
         self.cpuinfo = None
@@ -72,6 +71,7 @@ class QemuConfig:
         parser.add_argument('--logpath', type=str, help="Alternate log path")
         parser.add_argument('--pexpect-timeout', type=int, help="pexepect timeout in seconds (default 60)")
         parser.add_argument('--mount', dest='mounts',  type=str, default=[], action='append', help='Host mount points')
+        parser.add_argument('--mount-cmd', dest='mount_command',  type=str, help="Command to run in mount point (default 'run')")
 
         args = parser.parse_args(orig_args)
 
@@ -105,6 +105,9 @@ class QemuConfig:
 
         if args.logpath:
             self.logpath = args.logpath
+
+        if args.mount_command:
+            self.host_command = args.mount_command
 
         self.compat_rootfs = args.compat_rootfs
         self.use_vof = args.use_vof
