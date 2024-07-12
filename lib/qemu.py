@@ -47,7 +47,6 @@ class QemuConfig:
 
     def configure_from_env(self):
         self.pexpect_timeout = int(get_env_var('QEMU_PEXPECT_TIMEOUT', self.pexpect_timeout))
-        self.logpath = get_env_var('QEMU_CONSOLE_LOG', self.logpath)
         self.host_command = get_env_var('QEMU_HOST_COMMAND', self.host_command)
         self.expected_release = get_expected_release()
         self.vmlinux = get_vmlinux()
@@ -76,6 +75,7 @@ class QemuConfig:
         parser.add_argument('--use-vof', action='store_true', help="Use pseries vof")
         parser.add_argument('--quiet', action='store_true', help="Reduce output")
         parser.add_argument('--net-tests', action='store_true', help="Run network tests")
+        parser.add_argument('--logpath', type=str, help="Alternate log path")
 
         args = parser.parse_args(orig_args)
 
@@ -103,6 +103,9 @@ class QemuConfig:
 
         if args.initrd:
             self.initrd = args.initrd
+
+        if args.logpath:
+            self.logpath = args.logpath
 
         self.compat_rootfs = args.compat_rootfs
         self.use_vof = args.use_vof
