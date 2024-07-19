@@ -5,9 +5,9 @@ VERSIONS := 4.2.1 \
 	7.1.0 \
 	7.2.3 \
 	8.2.3 \
-	9.0.0
+	9.0.2
 
-DEFAULT_VERSION = 8.2.3
+DEFAULT_VERSION = 9.0.2
 
 help:
 	@echo "qemu"
