@@ -38,7 +38,7 @@ RUN apt-get -q -y update && \
       libc-dev \
       libelf-dev \
       libfuse-dev \
-      liblz4-tool \
+      lz4 \
       libssl-dev \
       lzop \
       make \
