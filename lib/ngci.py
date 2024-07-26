@@ -754,7 +754,7 @@ def boot_host(state, boot, host_dir, number, total):
 
     boot_args = [
         f'--kernel-path {artifact_dir}/vmlinux',
-        f'--modules-path {artifact_dir}/modules.tar.bz2',
+        f'--modules-path {artifact_dir}/modules.tar.gz',
         f'--release-path {artifact_dir}/kernel.release'
     ]
 
