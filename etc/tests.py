@@ -313,6 +313,15 @@ def full_compile_test(args, suite=None):
             k(f'ppc64_defconfig+{feature}',   image, merge_config=[f'{feature}-y'])
             k(f'ppc64le_defconfig+{feature}', image, merge_config=[f'{feature}-y'])
 
+        pcrel_image = image
+        if not image_at_least(image, ['fedora@36', 'korg@12.1.0']):
+            # Only GCC >= 12 can build pcrel because it needs -mcpu=power10
+            pcrel_image = 'korg@12.1.0'
+
+        k('ppc64le_defconfig+pcrel', pcrel_image, merge_config=['pcrel-y'])
+        # FIXME doesn't build
+        # k('ppc64_defconfig+pcrel',   pcrel_image, merge_config=['pcrel-y'])
+
         ######################################### 
         # specific disabled features
         ######################################### 
