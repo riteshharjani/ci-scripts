@@ -69,9 +69,6 @@ def qemu_coverage(args, suite=None):
         # BOOK3S64 && BIG_ENDIAN
         # PSERIES, POWERNV, CELL, PS3, PMAC && PMAC64, PASEMI, MAPLE
         k('ppc64_guest_defconfig+lockdep', image, merge_config=guest_configs + ['lockdep-y'])
-        # As above with 4K page size
-        k('ppc64le_guest_defconfig+4k', image, merge_config=guest_configs_4k)
-        k('ppc64_guest_defconfig+4k', image, merge_config=guest_configs_4k)
         # G5
         k('g5_defconfig', image, merge_config=g5_configs)
         # BOOK3E_64
@@ -83,6 +80,11 @@ def qemu_coverage(args, suite=None):
         k('ppc44x_defconfig', image, merge_config=['devtmpfs'])
         # 8xx
         k('mpc885_ads_defconfig', image)
+
+        # 4K PAGE_SIZE builds, default builds are 64K
+        k('ppc64le_guest_defconfig+4k', image, merge_config=guest_configs_4k)
+        k('ppc64_guest_defconfig+4k', image, merge_config=guest_configs_4k)
+        k('g5_defconfig+4k', image, merge_config=g5_configs + ['4k-pages'])
 
         # PPC_85xx
         if image != "korg@5.5.0":
@@ -102,15 +104,21 @@ def qemu_coverage(args, suite=None):
         # G5
         b('qemu-g5', 'g5_defconfig', image)
         b('qemu-g5+compat', 'g5_defconfig', image)
+        b('qemu-g5', 'g5_defconfig+4k', image)
+        b('qemu-g5+compat', 'g5_defconfig+4k', image)
+
         # pseries boots
         b('qemu-pseries+p10+tcg',  'ppc64le_guest_defconfig+lockdep', image)
         b('qemu-pseries+p10+tcg',  'ppc64_guest_defconfig+lockdep',   image)
+        b('qemu-pseries+p10+tcg',  'ppc64le_guest_defconfig+4k', image)
 
         b(f'qemu-pseries+p8+{accel}',   'ppc64le_guest_defconfig+lockdep', image)
         b(f'qemu-pseries+p9+{accel}',   'ppc64le_guest_defconfig+lockdep', image)
         b(f'qemu-pseries+p8+{accel}',   'ppc64_guest_defconfig+lockdep',   image)
         b(f'qemu-pseries+p9+{accel}',   'ppc64_guest_defconfig+lockdep',   image)
         b(f'qemu-pseries+p9+{accel}+fedora39', 'ppc64le_guest_defconfig+lockdep', image)
+        b(f'qemu-pseries+p9+{accel}+fedora39', 'ppc64le_guest_defconfig+4k', image)
+
         # powernv boots
         b('qemu-powernv+p8+tcg',       'ppc64le_guest_defconfig+lockdep', image)
         b('qemu-powernv+p9+tcg',       'ppc64le_guest_defconfig+lockdep', image)
@@ -118,6 +126,7 @@ def qemu_coverage(args, suite=None):
         b('qemu-powernv+p8+tcg',       'ppc64_guest_defconfig+lockdep',   image)
         b('qemu-powernv+p9+tcg',       'ppc64_guest_defconfig+lockdep',   image)
         b('qemu-powernv+p10+tcg',      'ppc64_guest_defconfig+lockdep',   image)
+        b('qemu-powernv+p10+tcg',      'ppc64_guest_defconfig+4k',        image)
 
 
     for image in ['ubuntu@16.04', 'ubuntu']:
@@ -171,9 +180,6 @@ def full_compile_test(args, suite=None):
         # BOOK3S64 && BIG_ENDIAN
         # PSERIES, POWERNV, CELL, PS3, PMAC && PMAC64, PASEMI, MAPLE
         k('ppc64_guest_defconfig', image, merge_config=guest_configs)
-        # As above with 4K page size
-        k('ppc64le_guest_defconfig+4k', image, merge_config=guest_configs_4k)
-        k('ppc64_guest_defconfig+4k', image, merge_config=guest_configs_4k)
         # PMAC && PMAC64
         k('g5_defconfig', image, merge_config=g5_configs)
         # BOOK3E_64
@@ -247,6 +253,11 @@ def full_compile_test(args, suite=None):
         ######################################### 
         # PPC_8xx + PPC16K_PAGES
         k('mpc885_ads_defconfig+16k', image, merge_config=['16k-pages'])
+
+        # 4K PAGE_SIZE builds, default builds are 64K
+        k('ppc64le_guest_defconfig+4k', image, merge_config=guest_configs_4k)
+        k('ppc64_guest_defconfig+4k', image, merge_config=guest_configs_4k)
+        k('g5_defconfig+4k', image, merge_config=g5_configs + ['4k-pages'])
 
         ######################################### 
         # specific enabled features
