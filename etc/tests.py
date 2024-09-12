@@ -300,7 +300,16 @@ def full_compile_test(args, suite=None):
         ######################################### 
         # specific disabled features
         ######################################### 
-        for feature in ['radix', 'modules']:
+        for feature in ['radix', 'hpt-mmu']:
+            feat_image = image
+            if feature == 'hpt-mmu' and not image_at_least(image, ['fedora@36', 'korg@12.1.0']):
+                # Only GCC >= 12 can build HPT=n because it needs -mcpu=power10
+                feat_image = 'korg@12.1.0'
+            
+            k(f'ppc64_defconfig+no{feature}',   feat_image, merge_config=[f'{feature}-n'])
+            k(f'ppc64le_defconfig+no{feature}', feat_image, merge_config=[f'{feature}-n'])
+
+        for feature in ['modules']:
             k(f'ppc64_defconfig+no{feature}',   image, merge_config=[f'{feature}-n'])
             k(f'ppc64le_defconfig+no{feature}', image, merge_config=[f'{feature}-n'])
 
