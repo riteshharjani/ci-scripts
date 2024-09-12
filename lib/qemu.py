@@ -20,7 +20,7 @@ class QemuConfig:
         self.smp = None
         self.cloud_image = None
         self.host_mounts = []
-        self.cmdline = ['noreboot']
+        self.cmdline = ['noreboot udbg-immortal']
         self.pexpect_timeout = 60
         self.logpath = 'console.log'
         self.quiet = False
