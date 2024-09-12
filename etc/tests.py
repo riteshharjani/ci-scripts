@@ -308,6 +308,8 @@ def full_compile_test(args, suite=None):
             
             k(f'ppc64_defconfig+no{feature}',   feat_image, merge_config=[f'{feature}-n'])
             k(f'ppc64le_defconfig+no{feature}', feat_image, merge_config=[f'{feature}-n'])
+            k(f'ppc64_defconfig+no{feature}+4k',   feat_image, merge_config=[f'{feature}-n', '4k-pages'])
+            k(f'ppc64le_defconfig+no{feature}+4k', feat_image, merge_config=[f'{feature}-n', '4k-pages'])
 
         for feature in ['modules']:
             k(f'ppc64_defconfig+no{feature}',   image, merge_config=[f'{feature}-n'])
