@@ -118,9 +118,13 @@ def qemu_coverage(args, suite=None):
         k('g5_defconfig+4k', image, merge_config=g5_configs + ['4k-pages'])
 
         # PPC_85xx
-        if image != "korg@5.5.0":
-            k('corenet32_smp_defconfig', image, merge_config=['debug-info-n'])
-            b('qemu-e500mc', 'corenet32_smp_defconfig', image)
+        ppc85xx_image = image
+        if not image_at_least(image, ['fedora@31', 'korg@8.5.0']):
+            # The 85xx builds hit gcc segfaults with earlier compilers, so use 8.5.0
+            ppc85xx_image = 'korg@8.5.0'
+
+        k('corenet32_smp_defconfig', ppc85xx_image,  merge_config=['debug-info-n'])
+        b('qemu-e500mc', 'corenet32_smp_defconfig', ppc85xx_image)
 
         # PPC_BOOK3S_32
         b('qemu-mac99', 'pmac32_defconfig', image)
@@ -215,12 +219,21 @@ def full_compile_test(args, suite=None):
         k('g5_defconfig', image, merge_config=g5_configs)
         # BOOK3E_64
         k('corenet64_smp_defconfig', image, merge_config=corenet64_configs)
+
+        ppc85xx_image = image
+        if not image_at_least(image, ['fedora@31', 'korg@8.5.0']):
+            # The 85xx builds hit gcc segfaults with earlier compilers, so use 8.5.0
+            ppc85xx_image = 'korg@8.5.0'
+
         # PPC_85xx, PPC_E500MC
-        k('corenet32_smp_defconfig', image, merge_config=['debug-info-n'])
+        k('corenet32_smp_defconfig', ppc85xx_image, merge_config=['debug-info-n'])
         # PPC_85xx, SMP=y, PPC_E500MC=n
-        k('mpc85xx_smp_defconfig', image)
+        k('mpc85xx_smp_defconfig', ppc85xx_image)
         # PPC_85xx, SMP=n
-        k('mpc85xx_defconfig', image)
+        k('mpc85xx_defconfig', ppc85xx_image)
+        # PPC_85xx + RANDOMIZE_BASE
+        k('mpc85xx_smp_defconfig+kaslr', ppc85xx_image, merge_config=['randomize-base-y'])
+
         # PPC_BOOK3S_32
         k('pmac32_defconfig', image, merge_config=pmac32_configs)
         k('pmac32_defconfig+smp', image, merge_config=pmac32_configs + ['smp-y'])
@@ -314,10 +327,6 @@ def full_compile_test(args, suite=None):
         for feature in ['modules']:
             k(f'ppc64_defconfig+no{feature}',   image, merge_config=[f'{feature}-n'])
             k(f'ppc64le_defconfig+no{feature}', image, merge_config=[f'{feature}-n'])
-
-        # PPC_85xx + RANDOMIZE_BASE
-        # This hits gcc segfaults with earlier compilers, so use 8.5.0
-        k('mpc85xx_smp_defconfig+kaslr', image.replace('korg@5.5.0', 'korg@8.5.0'), merge_config=['randomize-base-y'])
 
     ######################################### 
     # selftests
