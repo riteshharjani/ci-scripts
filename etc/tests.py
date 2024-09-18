@@ -256,19 +256,22 @@ def full_compile_test(args, suite=None):
         # Doesn't exist
         #k('ppc64le_allyesconfig', image)
 
-        # GCC 5.5.0 fails on various things for allyes/allmod
-        tmp_image = image.replace('korg@5.5.0', 'korg@8.5.0')
+        allyesmod_image = image
+        if not image_at_least(image, ['fedora@31', 'korg@8.5.0']):
+            # GCC 5.5.0 fails on various things for allyes/allmod
+            allyesmod_image = 'korg@8.5.0'
+
         # 64-bit Book3S BE
-        k('allyesconfig', tmp_image, merge_config=no_gcc_plugins)
+        k('allyesconfig', allyesmod_image, merge_config=no_gcc_plugins)
         # 64-bit Book3S BE
-        k('allmodconfig', tmp_image, merge_config=no_gcc_plugins)
+        k('allmodconfig', allyesmod_image, merge_config=no_gcc_plugins)
         # 64-bit Book3S LE
-        k('ppc64le_allmodconfig', tmp_image, merge_config=no_gcc_plugins)
+        k('ppc64le_allmodconfig', allyesmod_image, merge_config=no_gcc_plugins)
         # 32-bit Book3S BE (korg 5.5.0 doesn't build)
-        k('ppc32_allmodconfig', tmp_image, merge_config=no_gcc_plugins)
+        k('ppc32_allmodconfig', allyesmod_image, merge_config=no_gcc_plugins)
         # 64-bit BOOK3E BE (korg 5.5.0 doesn't build)
         # FIXME Broken due to start_text_address problems
-        # k('ppc64_book3e_allmodconfig', tmp_image, merge_config=no_gcc_plugins)
+        # k('ppc64_book3e_allmodconfig', allyesmod_image, merge_config=no_gcc_plugins)
 
         ######################################### 
         # specific machine/platform configs
