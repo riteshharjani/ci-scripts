@@ -309,7 +309,7 @@ def full_compile_test(args, suite=None):
         ######################################### 
         # specific enabled features
         ######################################### 
-        for feature in ['preempt', 'compat', 'lockdep', 'reltest']:
+        for feature in ['preempt', 'compat', 'lockdep', 'reltest', 'opt-for-size']:
             k(f'ppc64_defconfig+{feature}',   image, merge_config=[f'{feature}-y'])
             k(f'ppc64le_defconfig+{feature}', image, merge_config=[f'{feature}-y'])
 
