@@ -25,6 +25,37 @@ def clang_image(images):
     return None
 
 
+# Check that `image` is at least as new as one of the images
+# in the `versions` list.
+def image_at_least(image, versions):
+    # Split the image into the name and optional version number
+    parts = image.split('@')
+    iname = parts[0]
+    if len(parts) == 2:
+        iversion = int(parts[1].replace('.', ''))
+    else:
+        iversion = None
+
+    for version in versions:
+        vname, vver = version.split('@')
+
+        # If the names don't match continue
+        if iname != vname:
+            continue
+
+        # If the input image has no version it's implicitly the latest, so
+        # assume it's sufficiently new.
+        if iversion is None:
+            return True
+
+        # Compare the version numbers
+        vver = int(vver.replace('.', ''))
+        if iversion >= vver:
+            return True
+
+    return False
+
+
 def qemu_coverage(args, suite=None):
     images = std_images(args)
     if suite is None:
