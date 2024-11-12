@@ -290,6 +290,7 @@ def full_compile_test(args, suite=None):
         k('powernv_defconfig', image, merge_config=cfgs)
         # CELL
         k('cell_defconfig', image, merge_config=cell_configs)
+        k('ps3_defconfig', image)
         # POWERNV, some shrinking/hardening options
         k('skiroot_defconfig', image)
         # PPC_86xx (BOOK3S_32)
