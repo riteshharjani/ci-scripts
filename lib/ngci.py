@@ -82,9 +82,9 @@ def defconfig_subarch(defconfig):
     ]
 
     ppc64_configs = [
-        'allmodconfig'
+        'allmodconfig',
         'allyesconfig',
-        'cell_defconfig'
+        'cell_defconfig',
         'corenet64_smp_defconfig',
         'g5_defconfig',
         'pseries_defconfig',
