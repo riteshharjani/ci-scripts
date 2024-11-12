@@ -88,6 +88,7 @@ def defconfig_subarch(defconfig):
         'corenet64_smp_defconfig',
         'g5_defconfig',
         'pseries_defconfig',
+        'ps3_defconfig',
     ]
 
     base_config = defconfig.split('+')[0]
