@@ -18,6 +18,7 @@ class QemuConfig:
         self.accel = 'tcg'
         self.use_vof = False
         self.smp = None
+        self.serial = None
         self.cloud_image = None
         self.host_mounts = []
         self.cmdline = ['noreboot']
@@ -37,6 +38,8 @@ class QemuConfig:
         self.shutdown = None
         self.callbacks = []
         self.extra_args = []
+        self.qemu_args = None
+        self.ssh_port = 1234
         self.qemu_path = None
         self.qemu_cmd = None
         self.login = False
@@ -73,6 +76,7 @@ class QemuConfig:
         parser.add_argument('--accel', type=str, help="Accelerator to use, 'tcg' (default) or 'kvm'")
         parser.add_argument('--cpu', type=str, help="CPU to use")
         parser.add_argument('--smp', type=str, help="SMP config")
+        parser.add_argument('--serial', type=str, help="serial config")
         parser.add_argument('--mem-size', type=str, help="Memory config")
         parser.add_argument('--cloud-image', type=str, help="Cloud image to use")
         parser.add_argument('--initrd', type=str, help="Name of initrd to use")
@@ -89,6 +93,8 @@ class QemuConfig:
         parser.add_argument('--kernel-path', type=str, help='Path to kernel (vmlinux)')
         parser.add_argument('--modules-path', type=str, help='Path to modules tarball')
         parser.add_argument('--selftests-path', type=str, help='Path to selftests tarball')
+        parser.add_argument('--qemu-args', dest='qemu_args', type=str, help='qemu args')
+        parser.add_argument('--ssh-port', dest='ssh_port', type=str, help='host fwd ssh port')
         parser.add_argument('--bios', type=str, help='BIOS option for qemu')
         parser.add_argument('--cap', dest='machine_caps',  type=str, default=[], action='append', help='Machine caps')
         parser.add_argument('--qemu-path', dest='qemu_path', type=str, help='Path to qemu bin directory')
@@ -116,6 +122,15 @@ class QemuConfig:
         if args.smp:
             self.smp= args.smp
 
+        if args.serial:
+            self.serial = args.serial
+
+        if args.qemu_args:
+            self.qemu_args = args.qemu_args
+
+        if args.ssh_port:
+            self.ssh_port = args.ssh_port
+
         if args.mem_size:
             self.mem= args.mem_size
 
@@ -142,7 +157,7 @@ class QemuConfig:
 
         if args.modules_path:
             self.modules_tarball = args.modules_path
-            
+
         if args.qemu_path:
             self.qemu_path = args.qemu_path
 
@@ -188,7 +203,7 @@ class QemuConfig:
         if not self.expected_release:
             logging.error("Couldn't find kernel.release")
             return
-            
+
         if not self.vmlinux:
             logging.error("Can't find kernel vmlinux")
             return
@@ -196,7 +211,7 @@ class QemuConfig:
         if not self.root_disk_path:
             logging.error("Couldn't locate root disks")
             return
- 
+
         if self.machine_is('pseries'):
             if self.accel == 'tcg':
                 self.machine_caps += ['cap-htm=off']
@@ -266,11 +281,13 @@ class QemuConfig:
 
         if self.net is None:
             if self.machine_is('pseries'):
-                self.net = '-nic user,model=virtio-net-pci'
+                self.net = f'-nic user,model=virtio-net-pci'
             elif self.machine_is('powernv'):
                 self.net = '-netdev user,id=net0 -device e1000e,netdev=net0'
             else:
                 self.net = '-nic user'
+            if self.ssh_port:
+                self.net += f',hostfwd=tcp:127.0.0.1:{self.ssh_port}-:22'
 
         if self.machine == 'powernv':
             if self.cpu and self.cpu.upper() == 'POWER8':
@@ -353,7 +370,7 @@ class QemuConfig:
 
         # Convert to drive letter
         return chr(ord('a') + drive_id)
-        
+
     def prepare_cloud_image(self):
         if self.cloud_image is None:
             return
@@ -375,7 +392,7 @@ class QemuConfig:
 
         cloud_drive = self.add_drive(f'file={img_path},format={format}')
         self.add_drive(f'file={rdpath}/cloud-init-user-data.img,format=raw,readonly=on')
-        
+
         if 'ubuntu' in self.cloud_image:
             self.cmdline.insert(0, f'root=/dev/vd{cloud_drive}1')
         elif 'fedora34' in self.cloud_image or 'debian' in self.cloud_image:
@@ -419,6 +436,9 @@ class QemuConfig:
             '-kernel', self.vmlinux,
         ]
 
+        if self.serial:
+            l.append(self.serial)
+
         if self.net:
             l.append(self.net)
 
@@ -442,7 +462,10 @@ class QemuConfig:
             cmdline = ' '.join(self.cmdline)
             l.append(f'"{cmdline}"')
 
+        if self.qemu_args:
+            l.append(self.qemu_args)
         l.extend(self.extra_args)
+
 
         logging.debug(l)
 
