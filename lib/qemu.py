@@ -387,6 +387,8 @@ class QemuConfig:
             atexit.register(lambda: os.unlink(dst))
             img_path = dst
             format = 'qcow2'
+        elif self.cloud_image.endswith('.img'):
+            format = 'qcow2'
         else:
             format = 'raw'
 
